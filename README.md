@@ -1,4 +1,4 @@
-# FP30playground
+# FP30 playground
 
 This is an experimental app for roland fp30 digital piano.
 
