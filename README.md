@@ -1,8 +1,9 @@
 # FP30playground
 
+This is an experimental app for roland fp30 digital piano.
 Test the app here: [https://jjulio.github.io/FP30playground](https://jjulio.github.io/FP30playground)
 
-You could play a lot of new sounds and settings (effect types,reverbs,chorus,pitch bend, modulation,sound envelope settings...)
+FP30 is a fantastic piano!. With this app you could play a lot of new sounds and settings (effect types,reverbs,chorus,pitch bend, modulation,sound envelope settings...)
 This app uses a Midi loopback to receive the midi notes of the FP30 and send back again with the posibility to select a lot of new sounds and settings!
 By default it switches off the internal sound generator (main keyboard midi local off) but you could play with this enabled also if you want a layered sound.
 
