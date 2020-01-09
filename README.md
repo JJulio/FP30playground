@@ -1,6 +1,4 @@
 # FP30playground
-FP30 playground
-**FP30 Playground**
 
 Test the app here: [https://jjulio.github.io/FP30playground/](https://jjulio.github.io/FP30playground/)
 
