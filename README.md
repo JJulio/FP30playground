@@ -1,6 +1,6 @@
 # FP30playground
 
-Test the app here: [https://jjulio.github.io/FP30playground/](https://jjulio.github.io/FP30playground/)
+Test the app here: [https://jjulio.github.io/FP30playground](https://jjulio.github.io/FP30playground)
 
 You could play a lot of new sounds and settings (effect types,reverbs,chorus,pitch bend, modulation,sound envelope settings...)
 This app uses a Midi loopback to receive the midi notes of the FP30 and send back again with the posibility to select a lot of new sounds and settings!
