@@ -10,8 +10,8 @@ By default it switches off the internal sound generator (main keyboard midi loca
 
 This app works with the piano connected with USB cable (with bluetooth connection the lag is very bad). For Android use an OTG cable to connect your piano and for ipad use the camera adapter(USB).
 
-This app works on PC (chrome browser) and Android(chrome browser).
-for ipad (IOS) users you could download the free web midi browser app, open the address bar (at top) and copy the app url. You could save the url on the favourites (middle bottom button) (and if it´s the first one it will open with the app).
+This app works on PC (chrome browser) and Android (chrome browser).
+For ipad (IOS) users (like me) you could download the free Web MIDI Browser app. You need to configure the settings (left bottom button) and enable sysex (last option). Open the address bar (at top) and copy the app url(top of this page). You could save the url on the favorites (middle bottom button).
 
 *Note1:* When you disconnect the app probably your fp30 doesn't sound. This is because the midi local off. You could enable with Function+F1(the more lower F key) or simple switch off/on your keyboard with the power on/off button.
 *Note2:* Some of the sound envolope settings (attack, release, cutoff...) does not work on all sounds (for example this don´t work on piano sounds)
