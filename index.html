@@ -238,7 +238,7 @@ function setchorustype(value){
 
 function setresonance(value=64,inc=0){
 	if (inc!=0)
-		value = parseInt($("#release")[0].value)+inc;
+		value = parseInt($("#resonance")[0].value)+inc;
 	$("#res").text(value);
 	$("#resonance")[0].value=value;
 	if (midioutput)
