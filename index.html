@@ -4,10 +4,9 @@
     <title>FP30 playground webmidi</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="https://code.jquery.com/ui/1.12.1/themes/dark-hive/jquery-ui.css" rel="stylesheet">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">	
+	<meta name="mobile-web-app-capable" content="yes">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>	
 <style>
 
     body{
@@ -59,6 +58,15 @@
 	transform: scale(1.5);
 	padding:0px;
 	margin:0px;
+	}
+	input[type=radio]{
+	-ms-transform: scale(1.5); /* IE */
+	-moz-transform: scale(1.5); /* FF */
+	-webkit-transform: scale(1.5); /* Safari and Chrome */
+	-o-transform: scale(1.5); /* Opera */
+	transform: scale(1.5);
+	padding:10px;
+	margin:10px;	
 	}
 	
 	input[type=text]{
@@ -460,7 +468,8 @@ function canvastend(canvas){
 	var ctx = canvas.getContext('2d');
 	//ctx.clear();
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	canvas.pendown=false;
+	canvasgrid(canvas);
+	canvas.pendown=false;	
 	setpitchbend(64);
 	setmodulation(0);
 }
@@ -481,7 +490,10 @@ function canvaststart(canvas){
 	canvas.pendown=true;
 	var centerx = canvas.width/2;
 	var centery = canvas.height/2;				
-	var pitchbend = Math.min(Math.max(parseInt((x*128)/canvas.width), 0), 127);
+	var pitchbend = (x-(canvas.width/2))/(canvas.width/2);
+	pitchbend = Math.sign(pitchbend)*pitchbend*pitchbend; //  exponential
+	pitchbend = Math.min(Math.max(parseInt(pitchbend*64 + 64.5), 0), 127);
+	//var pitchbend = Math.min(Math.max(parseInt((x*128)/canvas.width), 0), 127);
 	var modulation = 0;
 	if ((y-centery)<0)
 		modulation = Math.min(Math.max(parseInt((centery-y)*128/centery),0),127);
@@ -508,7 +520,10 @@ function canvastmove(canvas){
 		ctx.fillRect(x,y, 8, 8);
 		var centerx = canvas.width/2;
 		var centery = canvas.height/2;				
-		var pitchbend = Math.min(Math.max(parseInt((x*128)/canvas.width), 0), 127);
+		var pitchbend = (x-(canvas.width/2))/(canvas.width/2);
+		pitchbend = Math.sign(pitchbend)*pitchbend*pitchbend; // exponential
+		pitchbend = Math.min(Math.max(parseInt(pitchbend*64 + 64.5), 0), 127);
+		//var pitchbend = Math.min(Math.max(parseInt((x*128)/canvas.width), 0), 127);
 		var modulation = 0;
 		if ((y-centery)<0)
 			modulation = Math.min(Math.max(parseInt((centery-y)*128/centery),0),127);
@@ -526,14 +541,15 @@ function canvasdown(canvas){
 	canvas.pendown=true;
 	var centerx = canvas.width/2;
 	var centery = canvas.height/2;				
-	var pitchbend = Math.min(Math.max(parseInt((e.offsetX*128)/canvas.width), 0), 127);
+	var pitchbend = (e.offsetX-(canvas.width/2))/(canvas.width/2);
+	pitchbend = Math.sign(pitchbend)*pitchbend*pitchbend; //  exponential
+	pitchbend = Math.min(Math.max(parseInt(pitchbend*64 + 64.5), 0), 127);
+	//var pitchbend = Math.min(Math.max(parseInt((e.offsetX*128)/canvas.width), 0), 127);
 	var modulation = 0;
 	if ((e.offsetY-centery)<0)
 		modulation = Math.min(Math.max(parseInt((centery-e.offsetY)*128/centery),0),127);
 	setpitchbend(pitchbend);
-	setmodulation(modulation);
-	$("#pblabel").text(pitchbend+" "+e.offsetX);
-	$("#molabel").text(modulation+" "+e.offsetY);
+	setmodulation(modulation);	
 }
 
 function canvasmove(canvas){
@@ -542,24 +558,37 @@ function canvasmove(canvas){
 		var ctx = canvas.getContext('2d');
 		ctx.fillRect(e.offsetX, e.offsetY, 5, 5);
 		var centerx = canvas.width/2;
-		var centery = canvas.height/2;				
-		var pitchbend = Math.min(Math.max(parseInt((e.offsetX*128)/canvas.width), 0), 127);
+		var centery = canvas.height/2;	
+		var pitchbend = (e.offsetX-(canvas.width/2))/(canvas.width/2);
+		pitchbend = Math.sign(pitchbend)*pitchbend*pitchbend; //exponential
+		pitchbend = Math.min(Math.max(parseInt(pitchbend*64 + 64.5), 0), 127);
+		//var pitchbend = Math.min(Math.max(parseInt((e.offsetX*128)/canvas.width), 0), 127);
 		var modulation = 0;
 		if ((e.offsetY-centery)<0)
 			modulation = Math.min(Math.max(parseInt((centery-e.offsetY)*128/centery),0),127);
 		setpitchbend(pitchbend);
-		setmodulation(modulation);
-		$("#pblabel").text(pitchbend+" "+e.offsetX+" "+canvas.offsetLeft);
-		$("#molabel").text(modulation+" "+e.offsetY+" "+canvas.offsetTop);
+		setmodulation(modulation);		
 		}
 }
 
 function canvasup(canvas){	
 	var ctx = canvas.getContext('2d');
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	canvasgrid(canvas);
 	canvas.pendown=false;
 	setpitchbend(64);
 	setmodulation(0);
+}
+
+function canvasgrid(canvas){
+	var ctx = canvas.getContext("2d");
+	ctx.beginPath();
+	ctx.strokeStyle = "gray";
+	ctx.moveTo(0,canvas.height/2);
+	ctx.lineTo(canvas.width, canvas.height/2);
+	ctx.moveTo(canvas.width/2,0);
+	ctx.lineTo(canvas.width/2, canvas.height);
+	ctx.stroke();
 }
 
 function stayawake(){
@@ -600,18 +629,20 @@ function setup(){
 	</div>
 	<fieldset>
 	<div style="margin-top:10px;">
-		<input type="checkbox" id="cbox1" onchange="selectmidilocal(this);"> <label>Main keyboard (Midi local)</label>
+		<input type="checkbox" id="cbox1" onchange="selectmidilocal(this);"> <label style="font-size:12pt;">Main keyboard (Midi local)</label>
 	</div>	
 	<div style="margin-bottom:5px;">	
-		<input type="checkbox" id="cbox2" checked="checked" onchange="selectloopback(this);"> <label>New sounds (Midi loopback)&nbsp;&nbsp;</label>
-		<input type="checkbox" id="midisustain" checked="checked" onchange="selectmidisustain(this);"> <label>Sustain(CC)</label>
+		<input type="checkbox" id="cbox2" checked="checked" onchange="selectloopback(this);"> <label style="font-size:12pt;">New sounds (Midi loopback)&nbsp;&nbsp;</label>
+		<input type="checkbox" id="midisustain" checked="checked" onchange="selectmidisustain(this);"> <label style="font-size:12pt;">Sustain(CC)</label>
 	</div>
 	</fieldset>
+	<fieldset>
 	<div id="radioset" style="padding:0px;margin:0px;font-size:10pt;">
-		<input type="radio" id="part1" name="radio" onchange="changepart(0);" checked="checked"><label for="part1">Part1(main)</label>
-		<input type="radio" id="part3" name="radio" onchange="changepart(2);"><label for="part3">Part3(split)</label>
-		<input type="radio" id="part5" name="radio" onchange="changepart(4);"><label for="part5">Part5(dual)</label>
+		<input type="radio" id="part1" name="radio" onchange="changepart(0);" checked="checked"><label style="font-size:12pt;">Part1(main)</label>
+		<input type="radio" id="part3" name="radio" onchange="changepart(2);"><label style="font-size:12pt;">Part3(split)</label>
+		<input type="radio" id="part5" name="radio" onchange="changepart(4);"><label style="font-size:12pt;">Part5(dual)</label>
 	</div>
+	</fieldset>
 	<div style="padding:6px;margin:0px;">
 		<label for="selectSound" style="font-weight:bold;">SOUND:</label>
 		<select id="selectSound1" name="selectSound1"></select>	
@@ -676,14 +707,14 @@ function setup(){
 		<input type="range" min="0" max="127" value="0" class="slider" style="height:10px;width:60%;" id="slidecc" oninput="setslidecc(this.value);">		
 		<label class="labslide" id="cclabel">0</label>
 	</div>
-	<button style="width:auto;height:auto;margin:10px;" onclick="reset();setvolumen(127);">RESET MIDI</button>
-	<fieldset style="height:10px;margin:5px;padding:0px;"></fieldset>
+	<button style="width:auto;height:auto;margin:12px;" onclick="reset();setvolumen(127);">RESET MIDI</button>
+	<fieldset style="height:15px;margin:5px;padding:0px;"></fieldset>
 	
 	<script>
 	$("#selectInterface")[0].addEventListener("change",function(event,data){selectedInterface();});
 	$("#selectSound1")[0].addEventListener("change",function(event,data){selectedSound1();});
 	$("#selectSound2")[0].addEventListener("change",function(event,data){selectedSound2();});
-	$("#radioset").buttonset();
+	//$("#radioset").buttonset();
 	$("#selectReverb")[0].addEventListener("change",function(event,data){setreverbtype();});
 	$("#selectChorus")[0].addEventListener("change",function(event,data){setchorustype();});
 	$(window).bind('beforeunload', function(){
@@ -692,6 +723,7 @@ function setup(){
 			midioutput.send([0xb0,0x7A,0x7F]);
 		});
 	$("#myCanvas")[0].width=$("#canvasdiv").width();
+	canvasgrid($("#myCanvas")[0]);	
 	</script>
 </body>
 </html>
