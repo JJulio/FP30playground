@@ -16,7 +16,7 @@
 <style>
 
 .mytab {
-    width: 16% !important;  /* 12.5% for 8 tabs wide */
+    width: 15% !important;  /* 12.5% for 8 tabs wide */
     clear: none !important;  /* Prevent line break caused by ui-block-a */
 	margin:0px,0px,0px,0px;
 	padding:0px 0px 0px 0px;
@@ -139,7 +139,7 @@ function setchorustype(value){
 
 function setresonance(value=64,inc=0){
 	if (inc!=0)
-		value = parseInt($("#release")[0].value)+inc;
+		value = parseInt($("#resonance")[0].value)+inc;
 	//$("#res").text(value);
 	$("#resonance")[0].value=value;
 	$("#resonance").slider('refresh');
