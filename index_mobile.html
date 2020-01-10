@@ -16,15 +16,27 @@
 <style>
 
 .mytab {
-    width: 15% !important;  /* 12.5% for 8 tabs wide */
+    width: 16% !important;  /* 12.5% for 8 tabs wide */
     clear: none !important;  /* Prevent line break caused by ui-block-a */
+	margin:0px,0px,0px,0px;
+	padding:0px 0px 0px 0px;
 }
 
 .ui-content{
-	margin:0px,0px,0px,0px;
-	padding:0px,0px,0px,0px;
+	margin:0px 0px 0px 0px;
+	padding-top:0px !important;
+	padding-bottom:0px !important;
+	padding-left:4px !important;
+	padding-right:4px !important;
 }
 
+.ui-navbar{
+	margin:0px 0px 0px 0px;
+	padding-top:0px !important;
+	padding-bottom:0px !important;
+	padding-left:4px !important;
+	padding-right:4px !important;
+}
 
   canvas{
   background: #aaa;
@@ -507,13 +519,15 @@ function setup(){
 
 </script>
 </head>
-<body data-theme="b" onload="setup();">
-	<div data-role="page" data-theme="b" style="margin:0px,0px,0px,0px;padding:0px,0px,0px,0px;">
-	<!--<h2>FP30 Playground</h2>-->
-	<div data-role="tabs" id="tabs" style="margin:0px,0px,0px,0px;padding:0px,0px,0px,0px;">
-	    <div data-role="navbar" style="margin:0px,0px,0px,0px;padding:0px,0px,0px,0px;" >
+<body onload="setup();">
+	<!--<div data-role="page" data-theme="b" style="margin:0px,0px,0px,0px;padding:0px,0px,0px,0px;">-->
+	<div data-role="page" data-theme="b" id="page1">
+	<div role="main" class="ui-content">
+	<!--<h3>FP30 Playground</h3>-->
+	<div data-role="tabs" id="tabs">
+	    <div data-role="navbar" id="mynavbar">
 	        <ul>
-	        <li class="mytab"><a href="#tab1" data-ajax="false">MIDI</a></li>
+	        <li class="mytab"><a href="#tab1" class="ui-btn-active" data-ajax="false">MIDI</a></li>
 			<li class="mytab"><a href="#tab2" data-ajax="false">Sounds</a></li>
 			<li class="mytab"><a href="#tab3" data-ajax="false">Effects</a></li>
 			<li class="mytab"><a href="#tab4" data-ajax="false">Envelop</a></li>
@@ -636,11 +650,11 @@ function setup(){
 				
 	</div> <!--tab6-->
 	</div> <!--tabs-->	
-
+	</div> <!--main-->
 	</div> <!--page-->
 
 	<script>
-	screen.orientation.lock('landscape');
+	//screen.orientation.lock('landscape');
 	//$("#attack")[0].addEventListener("change",function(event,data){setattack(data.value);});
 	$("#selectInterface")[0].addEventListener("change",function(event,data){selectedInterface();});
 	$("#selectSound1")[0].addEventListener("change",function(event,data){selectedSound1();});
@@ -655,8 +669,8 @@ function setup(){
 		});
 	//$("#myCanvas")[0].width=$("#canvasdiv").width();
 	//$("#myCanvas")[0].width=$("#canvasdiv").width();
-	$("#myCanvas").width("100%");
-	canvasgrid($("#myCanvas")[0]);	
+	//$("#myCanvas").width("100%");
+	//canvasgrid($("#myCanvas")[0]);	
 	</script>
 </body>
 </html>
