@@ -228,6 +228,9 @@ function setreverb(value=0){
 	$("#rev").text(reverb);
 	if (midioutput){
 		midioutput.send([0xb0+part,91,reverb]);
+		if ((efx_msb!=0)||(efx_lsb!=0)){
+			sysex([0x40,0x03,0x17,parseInt(reverb)]);  // Send level to reverb
+			}
 		}
 }
 
@@ -236,6 +239,9 @@ function setchorus(value=0){
 	$("#cho").text(chorus);
 	if (midioutput){
 		midioutput.send([0xb0+part,93,chorus]);
+		if ((efx_msb!=0)||(efx_lsb!=0)){
+			sysex([0x40,0x03,0x18,parseInt(chorus)]);  // Send level to chorus
+			}
 		}
 }
 
@@ -270,7 +276,6 @@ function setefxlevel(value){
 	$("#efx").text(efx_level);
 	//sysex([0x40,0x03,0x1A,parseInt(value)]);		
 	if ((efx_msb!=0)||(efx_lsb!=0)){
-		// PART!!
 		sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
 		}
 }
@@ -279,7 +284,6 @@ function setefxp1(value=0){
 	efx_p1 = parseInt(value);
 	$("#efxp1").text(efx_p1);	
 	if ((efx_msb!=0)||(efx_lsb!=0)){
-		// PART!!
 		sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
 		}
 }
@@ -338,15 +342,23 @@ function setefxtype(value){
 			efx_p1 = 64;
 			efx_p2 = 64;
 			break;
+		case 5:
+			//alert("Rotary2");
+			efx_msb=0x03;
+			efx_lsb=0x00;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			efx_p1 = 64;
+			efx_p2 = 64;
+			break;
 		default:
 			break;
 	}
 	if ((efx_msb!=0)||(efx_lsb!=0)){
 		efx_level = 127;
 		$("#efxlevel")[0].value = "127";
-		$("#efx").text("127");
-		sysex([0x40,0x03,0x17,0x7F]);  // Send level to reverb
-		sysex([0x40,0x03,0x18,0x7F]);  // Send level to chorus
+		$("#efx").text("127"); 
+		sysex([0x40,0x03,0x17,parseInt(reverb)]);  // Send level to reverb
+		sysex([0x40,0x03,0x18,parseInt(chorus)]);  // Send level to chorus
 		sysex([0x40,0x03,0x1A,0x7F]);  // EFX Depth 100%
 		
 		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,efx_p1,efx_p2]);  // Coonnect part to EFX	
@@ -743,7 +755,7 @@ function setup(){
 </script>
 </head>
 <body onload="setup();">
-	<div><h2>FP30 Playground v0.2</h2></div>
+	<div><h2>FP30 Playground v0.21</h2></div>
 	<div>
 		<select id="selectInterface">
 			<option>Choose Midi interface</option>
@@ -787,7 +799,7 @@ function setup(){
 	<div>
 		<label for="selectEFX" style="color:#777;font-size:11pt;">EFX(*):</label>
 		<select id="selectEFX" style="font-size:12pt;">
-			<option selected="selected">None</option><option>EQ</option><option>Delay</option><option>Tremolo</option><option>Rotary</option>
+			<option selected="selected">None</option><option>EQ</option><option>Delay</option><option>Tremolo</option><option>Rotary</option><option>Rotary2</option>
 		</select>
 		<input type="range" min="0" max="127" value="0" class="slider" style="width: 25%;" id="efxparam1" oninput="setefxp1(this.value);"><label class="labslide">P1</label><label class="labslide" id="efxp1">0</label>
 		<input type="range" min="0" max="127" value="0" class="slider" style="width: 25%;" id="efxparam2" oninput="setefxp2(this.value);"><label class="labslide">P2</label><label class="labslide" id="efxp2">0</label>
