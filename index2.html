@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>FP30 playground webmidi</title>
+    <title>FP30 playground webmidi v1</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">	
@@ -239,7 +239,10 @@ function sysex(data){
 		//midioutput.send(data);
 		//midioutput.send([parseInt(ckechsum(data)),0xF7]);  // checksum and sysex END
 		//midioutput.send(sysex_end)
-		msg = [sysex_init,data,parseInt(checksum(data)),sysex_end];
+		msg = sysex_init;
+		msg = msg.concat(data);
+		msg = msg.concat(parseInt(checksum(data)));
+		msg = msg.concat(sysex_end);
 		midioutput.send(msg);
 		sleep(50);
 		}
@@ -295,18 +298,18 @@ function setefxp2(value=0){
 
 function setefxtype(value){
 	var select = $("#selectEFX")[0];
-	efxtype = parseInt(select.selectedIndex)
+	efxtype = parseInt(select.selectedIndex);
 	//if (midioutput == null)
 	//	return;
 	switch (efxtype){
 		case 0:
-			alert("None");
+			//alert("None");
 			sysex([0x40,0x03,0x00,0x00,0x00]); //EFX OFF
 			efx_msb=0;
 			efx_lsb=0;
 			break;
 		case 1:
-			alert("EQ");
+			//alert("EQ");
 			efx_msb=0x01;
 			efx_lsb=0x00;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
@@ -323,7 +326,7 @@ function setefxtype(value){
 			$("#efxp2").text(efx_p2);
 			break;
 		case 2:
-			alert("Delay");
+			//alert("Delay");
 			efx_msb=0x01;
 			efx_lsb=0x5b;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
@@ -339,7 +342,7 @@ function setefxtype(value){
 			$("#efxp2").text(efx_p2);
 			break;
 		case 3:
-			alert("Tremolo");
+			//alert("Tremolo");
 			efx_msb=0x01;
 			efx_lsb=0x25;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
@@ -355,10 +358,11 @@ function setefxtype(value){
 			$("#efxp2").text(efx_p2);
 			break;
 		case 4:
-			alert("Pru reverb");
-			sysex([0x40,0x11,0x22,100]);  // Pru reverb
+			//alert("Pru reverb");
+			//sysex([0x40,0x11,0x22,120]);  // Pru reverb
 			break;
-						
+		default:
+			break;
 	}
 	if ((efx_msb!=0)||(efx_lsb!=0)){
 		$("#efxlevel")[0].value = "127";
@@ -368,7 +372,7 @@ function setefxtype(value){
 	//var chksum = parseInt(checksum(data));	
 	//if (midioutput)
 		//midioutput.send([0xF0,0x41,0x10,0x42,0x12,0x40,0x01,0x30,parseInt(select.selectedIndex),chksum,0xF7]); // Roland sysex for reverb type
-	$(':focus').blur();
+	//$(':focus').blur();
 }
 
 
