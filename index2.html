@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>FP30 playground webmidi v1</title>
+    <title>FP30 playground webmidi</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">	
@@ -155,6 +155,9 @@ var efx_msb=0;
 var efx_lsb=0;
 var efx_p1=0;
 var efx_p2=0;
+var efx_level=0;
+var reverb = 40;
+var chorus = 0;
 
 var midiloopback = true;
 var midilocal = false;
@@ -221,24 +224,24 @@ function setexpression(value=127){
 }
 
 function setreverb(value=0){
-	$("#rev").text(value);
-	if (midioutput)
-		midioutput.send([0xb0+part,91,value]);
+	reverb = parseInt(value);
+	$("#rev").text(reverb);
+	if (midioutput){
+		midioutput.send([0xb0+part,91,reverb]);
+		}
 }
 
 function setchorus(value=0){
-	$("#cho").text(value);
-	if (midioutput)
-		midioutput.send([0xb0+part,93,value]);
+	chorus = parseInt(value);
+	$("#cho").text(chorus);
+	if (midioutput){
+		midioutput.send([0xb0+part,93,chorus]);
+		}
 }
 
 function sysex(data){
 	//if (1==1){
 	if(midioutput){	
-		//midioutput.send(sysex_init);
-		//midioutput.send(data);
-		//midioutput.send([parseInt(ckechsum(data)),0xF7]);  // checksum and sysex END
-		//midioutput.send(sysex_end)
 		msg = sysex_init;
 		msg = msg.concat(data);
 		msg = msg.concat(parseInt(checksum(data)));
@@ -251,31 +254,25 @@ function sysex(data){
 function setreverbtype(value){
 	var select = $("#selectReverb")[0];
 	var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
-	//var chksum = parseInt(checksum(data));
-	//alert([0xF0,0x41,0x10,0x42,0x12,0x40,0x01,0x30,parseInt(select.selectedIndex),chksum,0xF7]);
 	sysex(data);
-	//if (midioutput){
-	//	midioutput.send([0xF0,0x41,0x10,0x42,0x12,0x40,0x01,0x30,parseInt(select.selectedIndex),chksum,0xF7]); // Roland sysex for reverb type
-	//	}
-	//sleep(100);
 	$(':focus').blur();
 }
 
 function setchorustype(value){
 	var select = $("#selectChorus")[0];
 	var data = [0x40,0x01,0x38,parseInt(select.selectedIndex)];
-	//var chksum = parseInt(checksum(data));
 	sysex(data);
-	//if (midioutput){
-	//	midioutput.send([0xF0,0x41,0x10,0x42,0x12,0x40,0x01,0x38,parseInt(select.selectedIndex),chksum,0xF7]); // Roland sysex for chorus type
-	//	}
-	//sleep(100);
 	$(':focus').blur();
 }
 
 function setefxlevel(value){
-	$("#efx").text(value);
-	sysex([0x40,0x03,0x1A,parseInt(value)]);		
+	efx_level = parseInt(value);
+	$("#efx").text(efx_level);
+	//sysex([0x40,0x03,0x1A,parseInt(value)]);		
+	if ((efx_msb!=0)||(efx_lsb!=0)){
+		// PART!!
+		sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
+		}
 }
 
 function setefxp1(value=0){
@@ -283,7 +280,7 @@ function setefxp1(value=0){
 	$("#efxp1").text(efx_p1);	
 	if ((efx_msb!=0)||(efx_lsb!=0)){
 		// PART!!
-		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,parseInt(efx_p1),parseInt(efx_p2)]);
+		sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
 		}
 }
 
@@ -292,15 +289,15 @@ function setefxp2(value=0){
 	$("#efxp2").text(efx_p2);	
 	if ((efx_msb!=0)||(efx_lsb!=0)){
 		// PART!!
-		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,parseInt(efx_p1),parseInt(efx_p2)]);
+		sysex([0x40,0x4+part1,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
 		}
 }
 
 function setefxtype(value){
 	var select = $("#selectEFX")[0];
 	efxtype = parseInt(select.selectedIndex);
-	//if (midioutput == null)
-	//	return;
+	if (midioutput == null)
+		return;
 	switch (efxtype){
 		case 0:
 			//alert("None");
@@ -313,66 +310,52 @@ function setefxtype(value){
 			efx_msb=0x01;
 			efx_lsb=0x00;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			sysex([0x40,0x03,14,0x7F]);  // param 11 level (dir+3)
-			sysex([0x40,0x03,0x17,0x7F]);  // Send level to reverb
-			sysex([0x40,0x03,0x18,0x7F]);  // Send level to chorus
-			sysex([0x40,0x03,0x1A,0x7F]);  // EFX Depth 100%
-			sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,127,127]);  // Coonnect part to EFX	
-			efx_p1 = 127;
-			efx_p2 = 127;
-			$("#efxparam1")[0].value = efx_p1;
-			$("#efxp1").text(efx_p1);
-			$("#efxparam2")[0].value = efx_p2;
-			$("#efxp2").text(efx_p2);
+			//sysex([0x40,0x03,14,0x7F]);  // param 11 level (dir+3)
+			efx_p1 = 64;
+			efx_p2 = 64;
 			break;
 		case 2:
 			//alert("Delay");
 			efx_msb=0x01;
 			efx_lsb=0x5b;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			sysex([0x40,0x03,0x17,0x7F]);  // Send level to reverb
-			sysex([0x40,0x03,0x18,0x7F]);  // Send level to chorus
-			sysex([0x40,0x03,0x1A,0x7F]);  // EFX Depth 100%
-			sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,40,100]);  // Coonnect part to EFX
-			efx_p1 = 40;
-			efx_p2 = 100;
-			$("#efxparam1")[0].value = efx_p1;
-			$("#efxp1").text(efx_p1);
-			$("#efxparam2")[0].value = efx_p2;
-			$("#efxp2").text(efx_p2);
+			efx_p1 = 64;
+			efx_p2 = 64;
 			break;
 		case 3:
 			//alert("Tremolo");
 			efx_msb=0x01;
 			efx_lsb=0x25;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			sysex([0x40,0x03,0x17,0x7F]);  // Send level to reverb
-			sysex([0x40,0x03,0x18,0x7F]);  // Send level to chorus
-			sysex([0x40,0x03,0x1A,0x7F]);  // EFX Depth 100%
-			sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,40,100]);  // Coonnect part to EFX
 			efx_p1 = 40;
 			efx_p2 = 100;
-			$("#efxparam1")[0].value = efx_p1;
-			$("#efxp1").text(efx_p1);
-			$("#efxparam2")[0].value = efx_p2;
-			$("#efxp2").text(efx_p2);
 			break;
 		case 4:
-			//alert("Pru reverb");
-			//sysex([0x40,0x11,0x22,120]);  // Pru reverb
+			//alert("Rotary");
+			efx_msb=0x01;
+			efx_lsb=0x22;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			efx_p1 = 64;
+			efx_p2 = 64;
 			break;
 		default:
 			break;
 	}
 	if ((efx_msb!=0)||(efx_lsb!=0)){
+		efx_level = 127;
 		$("#efxlevel")[0].value = "127";
 		$("#efx").text("127");
+		sysex([0x40,0x03,0x17,0x7F]);  // Send level to reverb
+		sysex([0x40,0x03,0x18,0x7F]);  // Send level to chorus
+		sysex([0x40,0x03,0x1A,0x7F]);  // EFX Depth 100%
+		
+		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,efx_p1,efx_p2]);  // Coonnect part to EFX	
+		$("#efxparam1")[0].value = efx_p1;
+		$("#efxp1").text(efx_p1);
+		$("#efxparam2")[0].value = efx_p2;
+		$("#efxp2").text(efx_p2);
 		}		
-	//var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
-	//var chksum = parseInt(checksum(data));	
-	//if (midioutput)
-		//midioutput.send([0xF0,0x41,0x10,0x42,0x12,0x40,0x01,0x30,parseInt(select.selectedIndex),chksum,0xF7]); // Roland sysex for reverb type
-	//$(':focus').blur();
+	$(':focus').blur();
 }
 
 
@@ -760,7 +743,7 @@ function setup(){
 </script>
 </head>
 <body onload="setup();">
-	<div><h2>FP30 Playground</h2></div>
+	<div><h2>FP30 Playground v0.2</h2></div>
 	<div>
 		<select id="selectInterface">
 			<option>Choose Midi interface</option>
