@@ -119,7 +119,7 @@
   -webkit-appearance: none;
   appearance: none;
   width: 30px;
-  height: 30px;
+  height: 32px;
   border-color:#000;
   border-width:1px;
   border-radius: 30%; 
@@ -156,6 +156,12 @@ var efx_lsb=0;
 var efx_p1_param=0;
 var efx_p2_param=0;
 var efx_p3_param=0;
+var efx_p1_param_min=0;
+var efx_p1_param_max=0;
+var efx_p2_param_min=0;
+var efx_p2_param_max=0;
+var efx_p3_param_min=0;
+var efx_p3_param_max=0;
 var efx_level_param=0;
 var efx_p1=0;
 var efx_p2=0;
@@ -290,8 +296,9 @@ function setefxp1(value=0){
 	efx_p1 = parseInt(value);
 	$("#efxp1").text(efx_p1);	
 	//if ((efx_msb!=0)||(efx_lsb!=0)){
-	sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
+	//sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);	
 	//}
+	sysex([0x40,0x03,parseInt(efx_p1_param)+2,efx_p1]);
 }
 
 function setefxp2(value=0){
@@ -299,15 +306,25 @@ function setefxp2(value=0){
 	$("#efxp2").text(efx_p2);	
 	//if ((efx_msb!=0)||(efx_lsb!=0)){
 	// PART!!
-	sysex([0x40,0x4+part1,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
+	//sysex([0x40,0x4+part1,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
 	//}
+	sysex([0x40,0x03,parseInt(efx_p2_param)+2,efx_p2]);
+}
+function setefxp3(value=0){
+	efx_p3 = parseInt(value);
+	$("#efxp3").text(efx_p3);	
+	//if ((efx_msb!=0)||(efx_lsb!=0)){
+	// PART!!
+	//sysex([0x40,0x4+part1,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
+	//}
+	sysex([0x40,0x03,parseInt(efx_p3_param)+2,efx_p3]);
 }
 
 function setefxtype(value){
 	var select = $("#selectEFX")[0];
 	efxtype = parseInt(select.selectedIndex);
-	if (midioutput == null)
-		return;
+	//if (midioutput == null)
+	//	return;
 	switch (efxtype){
 		case 0:
 			//alert("None");
@@ -422,9 +439,19 @@ function setefxtype(value){
 			efx_msb=0x01;
 			efx_lsb=0x22;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			efx_p1 = 64;
-			efx_p2 = 64;
+			efx_p1_param = 1;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 1;
+			efx_p1 = 1;
+			efx_p2_param = 4;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 15;
+			efx_p2 = 7;
+			efx_p3_param = 5;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 127;
 			efx_p3 = 64;
+			efx_level_param = 11;
 			efx_level = 127;
 			break;
 		case 7:
@@ -432,9 +459,19 @@ function setefxtype(value){
 			efx_msb=0x03;
 			efx_lsb=0x00;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			efx_p1 = 64;
-			efx_p2 = 64;
+			efx_p1_param = 9;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 1;
+			efx_p1 = 1;
+			efx_p2_param = 1;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 1;
+			efx_p2 = 1;
+			efx_p3_param = 7;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 127;
 			efx_p3 = 64;
+			efx_level_param = 19;
 			efx_level = 127;
 			break;
 		case 8:
@@ -442,9 +479,19 @@ function setefxtype(value){
 			efx_msb=0x01;
 			efx_lsb=0x12;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			efx_p1_param = 1;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 127;
 			efx_p1 = 64;
+			efx_p2_param = 2;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 127;
 			efx_p2 = 64;
-			efx_p3 = 64;
+			efx_p3_param = 5;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_p3 = 15;
+			efx_level_param = 8;
 			efx_level = 127;
 			break;
 		case 9:
@@ -452,14 +499,25 @@ function setefxtype(value){
 			efx_msb=0x01;
 			efx_lsb=0x13;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			efx_p1_param = 1;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 127;
 			efx_p1 = 64;
+			efx_p2_param = 2;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 127;
 			efx_p2 = 64;
-			efx_p3 = 64;
+			efx_p3_param = 5;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_p3 = 15;
+			efx_level_param = 8;
 			efx_level = 127;
 			break;
 		default:
 			break;
 	}
+	
 	if ((efx_msb!=0)||(efx_lsb!=0)){
 		efx_level = 127;
 		$("#efxlevel")[0].value = "127";
@@ -469,10 +527,19 @@ function setefxtype(value){
 		sysex([0x40,0x03,0x1A,0x7F]);  // EFX Depth 100%
 		
 		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,64,64]);  // Coonnect part to EFX	
+		alert(efx_p3_param_max);
 		$("#efxparam1")[0].value = efx_p1;
+		$("#efxparam1")[0].min = efx_p1_param_min;
+		$("#efxparam1")[0].max = efx_p1_param_max;
 		$("#efxp1").text(efx_p1);
 		$("#efxparam2")[0].value = efx_p2;
+		$("#efxparam2")[0].min = efx_p2_param_min;
+		$("#efxparam2")[0].max = efx_p2_param_max;
 		$("#efxp2").text(efx_p2);
+		$("#efxparam3")[0].value = efx_p3;
+		$("#efxparam3")[0].min = efx_p3_param_min;
+		$("#efxparam3")[0].max = efx_p3_param_max;
+		$("#efxp3").text(efx_p3);
 		}		
 	$(':focus').blur();
 }
@@ -906,9 +973,12 @@ function setup(){
 		<label for="selectEFX" style="color:#777;font-size:11pt;">EFX(*):</label>
 		<select id="selectEFX" style="font-size:12pt;">
 			<option selected="selected">None</option><option>EQ1</option><option>EQ2</option><option>Delay1</option><option>Delay2</option><option>Tremolo</option><option>Rotary</option><option>Rotary2</option><option>Overdrive</option><option>Distortion</option>
-		</select>
-		<input type="range" min="0" max="127" value="0" class="slider" style="width: 25%;" id="efxparam1" oninput="setefxp1(this.value);"><label class="labslide">P1</label><label class="labslide" id="efxp1">0</label>
-		<input type="range" min="0" max="127" value="0" class="slider" style="width: 25%;" id="efxparam2" oninput="setefxp2(this.value);"><label class="labslide">P2</label><label class="labslide" id="efxp2">0</label>
+		</select>		
+	</div>
+	<div>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam1" oninput="setefxp1(this.value);"><label class="labslide">P1</label><label class="labslide" id="efxp1">0</label>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam2" oninput="setefxp2(this.value);"><label class="labslide">P2</label><label class="labslide" id="efxp2">0</label>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam3" oninput="setefxp3(this.value);"><label class="labslide">P3</label><label class="labslide" id="efxp3">0</label>
 	</div>
 	<div><input type="range" min="0" max="127" value="0" class="slider" id="efxlevel" oninput="setefxlevel(this.value);"><label class="labslide">EFX level</label><label class="labslide" id="efx">0</label></div>
 	<fieldset style="height:1px;margin:0px;padding:0px;"></fieldset>
