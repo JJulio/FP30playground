@@ -234,6 +234,18 @@ function setexpression(value=127){
 		midioutput.send([0xb0+part,0x11,value]);
 }
 
+function sysex(data){
+	//if (1==1){
+	if(midioutput){	
+		msg = sysex_init;
+		msg = msg.concat(data);
+		msg = msg.concat(parseInt(checksum(data)));
+		msg = msg.concat(sysex_end);
+		midioutput.send(msg);
+		sleep(50);
+		}
+}
+
 function setreverb(value=0){
 	reverb = parseInt(value);
 	$("#rev").text(reverb);
@@ -256,18 +268,6 @@ function setchorus(value=0){
 		}
 }
 
-function sysex(data){
-	//if (1==1){
-	if(midioutput){	
-		msg = sysex_init;
-		msg = msg.concat(data);
-		msg = msg.concat(parseInt(checksum(data)));
-		msg = msg.concat(sysex_end);
-		midioutput.send(msg);
-		sleep(50);
-		}
-}
-
 function setreverbtype(value){
 	var select = $("#selectReverb")[0];
 	var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
@@ -287,8 +287,9 @@ function setefxlevel(value){
 	$("#efx").text(efx_level);
 	//sysex([0x40,0x03,0x1A,parseInt(value)]);		
 	//if ((efx_msb!=0)||(efx_lsb!=0)){
-	sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
+	//sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
 	//sysex([0x40,0x03,0x1A,efx_level]);
+	sysex([0x40,0x03,parseInt(efx_level_param)+2,efx_p1]);
 	//	}
 }
 
@@ -526,7 +527,7 @@ function setefxtype(value){
 		sysex([0x40,0x03,0x18,parseInt(chorus)]);  // Send level to chorus
 		sysex([0x40,0x03,0x1A,0x7F]);  // EFX Depth 100%
 		
-		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,64,64]);  // Coonnect part to EFX	
+		sysex([0x40,0x41,0x23,efx_msb,efx_lsb]); //,0,127,64,64]);  // Coonnect part to EFX	
 		alert(efx_p3_param_max);
 		$("#efxparam1")[0].value = efx_p1;
 		$("#efxparam1")[0].min = efx_p1_param_min;
