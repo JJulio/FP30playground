@@ -287,9 +287,9 @@ function setefxlevel(value){
 	$("#efx").text(efx_level);
 	//sysex([0x40,0x03,0x1A,parseInt(value)]);		
 	//if ((efx_msb!=0)||(efx_lsb!=0)){
-	//sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
-	//sysex([0x40,0x03,0x1A,efx_level]);
-	sysex([0x40,0x03,parseInt(efx_level_param)+2,efx_level]);
+	sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
+	sysex([0x40,0x03,0x1A,efx_level]);
+	//sysex([0x40,0x03,parseInt(efx_level_param)+2,efx_level]);
 	//	}
 }
 
@@ -392,8 +392,8 @@ function setefxtype(value){
 			efx_p3_param_min = 49;
 			efx_p3_param_max = 89;
 			efx_level_param = 15;
-			efx_p1 = 64;
-			efx_p2 = 64;
+			efx_p1 = 32;
+			efx_p2 = 32;
 			efx_p3 = 64;
 			efx_level = 127;
 			break;
@@ -414,8 +414,8 @@ function setefxtype(value){
 			efx_p3_param_min = 49;
 			efx_p3_param_max = 89;
 			efx_level_param = 19;
-			efx_p1 = 64;
-			efx_p2 = 64;
+			efx_p1 = 32;
+			efx_p2 = 32;
 			efx_p3 = 64;
 			efx_level = 127;
 			break;
