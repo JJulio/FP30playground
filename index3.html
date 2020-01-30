@@ -527,8 +527,8 @@ function setefxtype(value){
 		sysex([0x40,0x03,0x18,parseInt(chorus)]);  // Send level to chorus
 		sysex([0x40,0x03,0x1A,0x7F]);  // EFX Depth 100%
 		
-		sysex([0x40,0x41,0x23,efx_msb,efx_lsb]); //,0,127,64,64]);  // Coonnect part to EFX	
-		alert(efx_p3_param_max);
+		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,100,64,64]);  // Coonnect part to EFX	
+		//alert(efx_p3_param_max);
 		$("#efxparam1")[0].value = efx_p1;
 		$("#efxparam1")[0].min = efx_p1_param_min;
 		$("#efxparam1")[0].max = efx_p1_param_max;
