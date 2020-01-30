@@ -534,6 +534,9 @@ function setefxtype(value){
 		
 		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,64,64]);  // Coonnect part to EFX	
 		//alert(efx_p3_param_max);
+		setefxp1(efx_p1);
+		setefxp1(efx_p2);
+		setefxp1(efx_p3);
 		$("#efxparam1")[0].value = efx_p1;
 		$("#efxparam1")[0].min = efx_p1_param_min;
 		$("#efxparam1")[0].max = efx_p1_param_max;
@@ -937,7 +940,7 @@ function setup(){
 </script>
 </head>
 <body onload="setup();">
-	<div><h2>FP30 Playground v0.24</h2></div>
+	<div><h2>FP30 Playground v0.25</h2></div>
 	<div>
 		<select id="selectInterface">
 			<option>Choose Midi interface</option>
