@@ -619,6 +619,7 @@ function setslidecc(value=0){
 function changepart(value){
 	//alert(value);
 	part = value;
+	setexpression(127);
 }
 
 function selectedSound1(){
@@ -654,6 +655,7 @@ function selectedSound2(){
 		midioutput.send([0xc0+part,pc-1]);        // program change
 		}
 	$(':focus').blur();
+	setexpression(127);
 	setattack(64);
 	setrelease(64);
 	setresonance(64);
@@ -754,6 +756,7 @@ function selectedInterface(){
   part=0;
   selectmidilocal($("#cbox1")[0]); // set midilocal state
   setvolumen(127);
+  setexpression(127);
   setreverb(0x0e);
   setchorus(0);
   setattack(64);
