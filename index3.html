@@ -252,7 +252,7 @@ function setreverb(value=0){
 	if (midioutput){
 		midioutput.send([0xb0+part,91,reverb]);
 		if ((efx_msb!=0)||(efx_lsb!=0)){
-			sysex([0x40,0x03,0x17,parseInt(reverb)]);  // Send level to reverb
+			sysex([0x40,0x03,0x17,reverb]);  // Send level to reverb
 			}
 		}
 }
@@ -262,9 +262,9 @@ function setchorus(value=0){
 	$("#cho").text(chorus);
 	if (midioutput){
 		midioutput.send([0xb0+part,93,chorus]);
-		if ((efx_msb!=0)||(efx_lsb!=0)){
-			sysex([0x40,0x03,0x18,parseInt(chorus)]);  // Send level to chorus
-			}
+		//if ((efx_msb!=0)||(efx_lsb!=0)){
+		sysex([0x40,0x03,0x18,chorus]);  // Send level to chorus
+		//}
 		}
 }
 
@@ -289,7 +289,7 @@ function setefxlevel(value){
 	//if ((efx_msb!=0)||(efx_lsb!=0)){
 	//sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
 	//sysex([0x40,0x03,0x1A,efx_level]);
-	sysex([0x40,0x03,parseInt(efx_level_param)+2,efx_p1]);
+	sysex([0x40,0x03,parseInt(efx_level_param)+2,efx_level]);
 	//	}
 }
 
@@ -359,7 +359,7 @@ function setefxtype(value){
 			efx_msb=0x01;
 			efx_lsb=0x01;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			sysex([0x40,0x03,12,3]);  // param 9
+			sysex([0x40,0x03,8,3]);  // param 9
 			efx_p1_param = 2;
 			efx_p1_param_min = 0;
 			efx_p1_param_max = 30;
@@ -380,6 +380,8 @@ function setefxtype(value){
 			efx_msb=0x01;
 			efx_lsb=0x5b;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			sysex([0x40,0x03,3,0]);  // param 1 model ms
+			sysex([0x40,0x03,6,0]);  // param 4 model ms
 			efx_p1_param = 2;
 			efx_p1_param_min = 0;
 			efx_p1_param_max = 127;
@@ -400,6 +402,8 @@ function setefxtype(value){
 			efx_msb=0x01;
 			efx_lsb=0x57;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX
+			sysex([0x40,0x03,3,0]);  // param 1 model ms
+			sysex([0x40,0x03,6,0]);  // param 4 model ms
 			efx_p1_param = 2;
 			efx_p1_param_min = 0;
 			efx_p1_param_max = 127;
@@ -420,6 +424,7 @@ function setefxtype(value){
 			efx_msb=0x01;
 			efx_lsb=0x25;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX
+			sysex([0x40,0x03,4,0]);  // param 2
 			efx_p1_param = 3;
 			efx_p1_param_min = 0;
 			efx_p1_param_max = 127;
@@ -525,10 +530,10 @@ function setefxtype(value){
 		$("#efx").text("127"); 
 		sysex([0x40,0x03,0x17,parseInt(reverb)]);  // Send level to reverb
 		sysex([0x40,0x03,0x18,parseInt(chorus)]);  // Send level to chorus
-		sysex([0x40,0x03,0x1A,0x7F]);  // EFX Depth 100%
+		sysex([0x40,0x03,0x1A,127]);  // EFX Depth 100%
 		
-		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,100,64,64]);  // Coonnect part to EFX	
-		//alert(efx_p3_param_max);
+		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,64,64]);  // Coonnect part to EFX	
+		alert(efx_p3_param_max);
 		$("#efxparam1")[0].value = efx_p1;
 		$("#efxparam1")[0].min = efx_p1_param_min;
 		$("#efxparam1")[0].max = efx_p1_param_max;
@@ -929,7 +934,7 @@ function setup(){
 </script>
 </head>
 <body onload="setup();">
-	<div><h2>FP30 Playground v0.23</h2></div>
+	<div><h2>FP30 Playground v0.24</h2></div>
 	<div>
 		<select id="selectInterface">
 			<option>Choose Midi interface</option>
