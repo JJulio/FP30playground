@@ -118,8 +118,8 @@
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 30px;
-  height: 32px;
+  width: 28px;
+  height: 34px;
   border-color:#000;
   border-width:1px;
   border-radius: 30%; 
@@ -262,9 +262,9 @@ function setchorus(value=0){
 	$("#cho").text(chorus);
 	if (midioutput){
 		midioutput.send([0xb0+part,93,chorus]);
-		//if ((efx_msb!=0)||(efx_lsb!=0)){
-		sysex([0x40,0x03,0x18,chorus]);  // Send level to chorus
-		//}
+		if ((efx_msb!=0)||(efx_lsb!=0)){
+			sysex([0x40,0x03,0x18,chorus]);  // Send level to chorus
+			}
 		}
 }
 
@@ -287,9 +287,9 @@ function setefxlevel(value){
 	$("#efx").text(efx_level);
 	//sysex([0x40,0x03,0x1A,parseInt(value)]);		
 	//if ((efx_msb!=0)||(efx_lsb!=0)){
-	sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
-	sysex([0x40,0x03,0x1A,efx_level]);
-	//sysex([0x40,0x03,parseInt(efx_level_param)+2,efx_level]);
+	//sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
+	//sysex([0x40,0x03,0x1A,efx_level]);
+	sysex([0x40,0x03,parseInt(efx_level_param)+2,efx_level]);
 	//	}
 }
 
@@ -363,10 +363,10 @@ function setefxtype(value){
 			efx_p1_param = 2;
 			efx_p1_param_min = 0;
 			efx_p1_param_max = 30;
-			efx_p2_param = 5;
+			efx_p2_param = 4;
 			efx_p2_param_min = 0;
 			efx_p2_param_max = 30;
-			efx_p3_param = 7;
+			efx_p3_param = 6;
 			efx_p3_param_min = 0;
 			efx_p3_param_max = 30;
 			efx_level_param = 10;
@@ -380,65 +380,65 @@ function setefxtype(value){
 			efx_msb=0x01;
 			efx_lsb=0x5b;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			sysex([0x40,0x03,3,0]);  // param 1 model ms
-			sysex([0x40,0x03,6,0]);  // param 4 model ms
-			efx_p1_param = 2;
-			efx_p1_param_min = 0;
-			efx_p1_param_max = 127;
-			efx_p2_param = 5;
+			//sysex([0x40,0x03,3,0]);  // param 1 model ms
+			//sysex([0x40,0x03,6,0]);  // param 4 model ms
+			efx_p1_param = 10;
+			efx_p1_param_min = 49;
+			efx_p1_param_max = 89;
+			efx_p2_param = 12;
 			efx_p2_param_min = 0;
-			efx_p2_param_max = 127;
-			efx_p3_param = 10;
-			efx_p3_param_min = 49;
-			efx_p3_param_max = 89;
-			efx_level_param = 15;
-			efx_p1 = 32;
-			efx_p2 = 32;
-			efx_p3 = 64;
-			efx_level = 127;
+			efx_p2_param_max = 30;
+			efx_p3_param = 13;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_level_param = 14;
+			efx_p1 = 64;
+			efx_p2 = 15;
+			efx_p3 = 15;
+			efx_level = 50;
 			break;
 		case 4:
 			//alert("Delay2");
 			efx_msb=0x01;
 			efx_lsb=0x57;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX
-			sysex([0x40,0x03,3,0]);  // param 1 model ms
-			sysex([0x40,0x03,6,0]);  // param 4 model ms
-			efx_p1_param = 2;
-			efx_p1_param_min = 0;
-			efx_p1_param_max = 127;
-			efx_p2_param = 5;
+			//sysex([0x40,0x03,3,0]);  // param 1 model ms
+			//sysex([0x40,0x03,6,0]);  // param 4 model ms
+			efx_p1_param = 10;
+			efx_p1_param_min = 49;
+			efx_p1_param_max = 89;
+			efx_p2_param = 12;
 			efx_p2_param_min = 0;
-			efx_p2_param_max = 127;
-			efx_p3_param = 10;
-			efx_p3_param_min = 49;
-			efx_p3_param_max = 89;
-			efx_level_param = 19;
-			efx_p1 = 32;
-			efx_p2 = 32;
-			efx_p3 = 64;
-			efx_level = 127;
+			efx_p2_param_max = 30;
+			efx_p3_param = 13;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_level_param = 14;
+			efx_p1 = 64;
+			efx_p2 = 15;
+			efx_p3 = 15;
+			efx_level = 50;
 			break;
 		case 5:
 			//alert("Tremolo");
 			efx_msb=0x01;
 			efx_lsb=0x25;
 			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX
-			sysex([0x40,0x03,4,0]);  // param 2
-			efx_p1_param = 3;
+			//sysex([0x40,0x03,4,0]);  // param 2
+			efx_p1_param = 1;
 			efx_p1_param_min = 0;
-			efx_p1_param_max = 127;
-			efx_p2_param = 5;
+			efx_p1_param_max = 4;
+			efx_p2_param = 6;
 			efx_p2_param_min = 0;
-			efx_p2_param_max = 127;
-			efx_p3_param = 6;
+			efx_p2_param_max = 30;
+			efx_p3_param = 7;
 			efx_p3_param_min = 0;
 			efx_p3_param_max = 30;
-			efx_level_param = 8;
-			efx_p1 = 64;
-			efx_p2 = 64;
+			efx_level_param = 5;
+			efx_p1 = 0;
+			efx_p2 = 15;
 			efx_p3 = 15;
-			efx_level = 127;
+			efx_level = 80;
 			break;
 		case 6:
 			//alert("Rotary");
@@ -940,7 +940,7 @@ function setup(){
 </script>
 </head>
 <body onload="setup();">
-	<div><h2>FP30 Playground v0.25</h2></div>
+	<div><h2>FP30 Playground v0.26</h2></div>
 	<div>
 		<select id="selectInterface">
 			<option>Choose Midi interface</option>
@@ -986,6 +986,7 @@ function setup(){
 		<select id="selectEFX" style="font-size:12pt;">
 			<option selected="selected">None</option><option>EQ1</option><option>EQ2</option><option>Delay1</option><option>Delay2</option><option>Tremolo</option><option>Rotary</option><option>Rotary2</option><option>Overdrive</option><option>Distortion</option>
 		</select>		
+		<label for="selectEFX" style="color:#777;font-size:11pt;">Tremolo and delay time controlled with piano tempo (fast/slow buttons)</label>
 	</div>
 	<div>
 		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam1" oninput="setefxp1(this.value);"><label class="labslide">P1</label><label class="labslide" id="efxp1">0</label>
