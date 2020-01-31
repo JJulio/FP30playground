@@ -525,9 +525,8 @@ function setefxtype(value){
 	}
 	
 	if ((efx_msb!=0)||(efx_lsb!=0)){
-		efx_level = 127;
-		$("#efxlevel")[0].value = "127";
-		$("#efx").text("127"); 
+		$("#efxlevel")[0].value = efx_level;
+		$("#efx").text(efx_level); 
 		sysex([0x40,0x03,0x17,parseInt(reverb)]);  // Send level to reverb
 		sysex([0x40,0x03,0x18,parseInt(chorus)]);  // Send level to chorus
 		sysex([0x40,0x03,0x1A,127]);  // EFX Depth 100%
@@ -537,17 +536,17 @@ function setefxtype(value){
 		setefxp1(efx_p1);
 		setefxp1(efx_p2);
 		setefxp1(efx_p3);
-		$("#efxparam1")[0].value = efx_p1;
 		$("#efxparam1")[0].min = efx_p1_param_min;
 		$("#efxparam1")[0].max = efx_p1_param_max;
+		$("#efxparam1")[0].value = efx_p1;
 		$("#efxp1").text(efx_p1);
-		$("#efxparam2")[0].value = efx_p2;
 		$("#efxparam2")[0].min = efx_p2_param_min;
 		$("#efxparam2")[0].max = efx_p2_param_max;
+		$("#efxparam2")[0].value = efx_p2;
 		$("#efxp2").text(efx_p2);
-		$("#efxparam3")[0].value = efx_p3;
 		$("#efxparam3")[0].min = efx_p3_param_min;
 		$("#efxparam3")[0].max = efx_p3_param_max;
+		$("#efxparam3")[0].value = efx_p3;
 		$("#efxp3").text(efx_p3);
 		}		
 	$(':focus').blur();
