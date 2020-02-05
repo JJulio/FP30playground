@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>FP30 playground webmidi</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">	
+	<meta name="mobile-web-app-capable" content="yes">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>	
+<style>
+
+    body{
+	font-family:verdana,sans-serif;
+	font-size:12pt;
+	background-color:#333;
+	margin:5px,5px,5px,5px;
+	-webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+	}
+	
+	h2{
+	color:#ccc;
+	margin-left:4px;
+	}
+	
+	fieldset{
+		font-size:11pt;
+		margin:0px;
+		padding:0px;
+		border-color:#777;
+		border-radius: 8px;
+		width:100%;
+	}
+	
+	select{
+		height:32px;
+		font-size:14pt;
+		font-weight:bold;
+		border-radius: 5px;
+		background:#ddd;
+		color:#333;
+	}
+	
+	option{
+		font-size:13pt;		
+	}
+	
+	input[type=checkbox]{
+	-ms-transform: scale(1.5); /* IE */
+	-moz-transform: scale(1.5); /* FF */
+	-webkit-transform: scale(1.5); /* Safari and Chrome */
+	-o-transform: scale(1.5); /* Opera */
+	transform: scale(1.5);
+	padding:0px;
+	margin:0px;
+	}
+	input[type=radio]{
+	-ms-transform: scale(1.5); /* IE */
+	-moz-transform: scale(1.5); /* FF */
+	-webkit-transform: scale(1.5); /* Safari and Chrome */
+	-o-transform: scale(1.5); /* Opera */
+	transform: scale(1.5);
+	padding:10px;
+	margin:10px;	
+	}
+	
+	input[type=text]{
+		width:38px;
+		background:#555;
+		color:#eee;
+		border:1;
+	}
+	
+	button{
+	width:30px;
+	height:30px;
+	font-size:11pt;
+	border-radius: 4px;
+	background-color:#555;
+	color:#ddd;
+	}
+	
+	div{
+	margin-left:10px;
+	margin-right:10px;
+	margin-top:20px;
+	margin-bottom:20px;
+	}
+	
+	label{
+	color:#ccc;
+	margin:3px;		
+	}
+	
+	.labslide{
+	font-size:10pt;
+	color:#ccc;
+	margin:3px;
+	}
+
+.slider {
+  -webkit-appearance: none;
+  width: 60%;
+  height: 15px;
+  border-radius: 5px;  
+  background: #888;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 34px;
+  border-color:#000;
+  border-width:1px;
+  border-radius: 30%; 
+  background: #6ad;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 30px;
+  height: 30px;
+  border-color:#000;
+  border-width:1px;
+  border-radius: 30%;
+  background: #6ad;
+  cursor: pointer;
+}
+
+  canvas{
+  background: #aaa;
+  border-radius: 6px;
+  margin:5px;
+  }
+</style>
+<script type="text/javascript">
+var midi = null;  // global MIDIAccess object
+var midiinput = null;
+var midioutput = null;
+var midiIn = [];
+var midiOut = [];
+var sounds=null;
+var part=0;
+var efx_msb=0;
+var efx_lsb=0;
+var efx_p1_param=0;
+var efx_p2_param=0;
+var efx_p3_param=0;
+var efx_p1_param_min=0;
+var efx_p1_param_max=0;
+var efx_p2_param_min=0;
+var efx_p2_param_max=0;
+var efx_p3_param_min=0;
+var efx_p3_param_max=0;
+var efx_level_param=0;
+var efx_p1=0;
+var efx_p2=0;
+var efx_p3=0;
+var efx_level=0;
+var reverb = 40;
+var chorus = 0;
+
+var midiloopback = true;
+var midilocal = false;
+var midisustain = true;
+
+var processID;
+var process_dummy=0;
+
+var sysex_init=[0xF0,0x41,0x10,0x42,0x12];
+var sysex_end=[0xF7];
+
+function checksum(data){  //Roland checksum for sysex
+  var check = 0;
+  for (i=0;i<data.length;i++)
+    check = check+data[i];
+  check = check % 128;
+  check = 128-check;
+  return check;
+}
+
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
+function reset(){
+	if (midioutput){
+		midioutput.send([0xb0,0x78,0x00]); // All sounds off
+		midioutput.send([0xb2,0x78,0x00]);
+		midioutput.send([0xb4,0x78,0x00]);
+		midioutput.send([0xb0,0x7B,0x00]); // All notes off
+		midioutput.send([0xb2,0x7B,0x00]);
+		midioutput.send([0xb4,0x7B,0x00]);
+		midioutput.send([0xb0,0x79,0x00]); //#Reset all
+		midioutput.send([0xb2,0x79,0x00]);
+		midioutput.send([0xb4,0x79,0x00]);
+		}
+}
+
+
+function sysex(data){
+	//if (1==1){
+	if(midioutput){	
+		msg = sysex_init;
+		msg = msg.concat(data);
+		msg = msg.concat(parseInt(checksum(data)));
+		msg = msg.concat(sysex_end);
+		midioutput.send(msg);
+		sleep(50);
+		}
+}
+
+function setreverb_level(value=0){
+	reverb = parseInt(value);
+	$("#rev_level").text(reverb);	
+	sysex([0x40,0x01,0x33,reverb]);  // Global Reverb level
+	//sysex([0x40,0x03,0x17,reverb]);  // EFX Send level to reverb	
+}
+
+function setreverb_char(value=0){
+	reverb_p = parseInt(value);
+	$("#rev_char").text(reverb_p);
+	sysex([0x40,0x01,0x31,reverb_p]); 
+}
+
+function setreverb_lpf(value=0){
+	reverb_p = parseInt(value);
+	$("#rev_lpf").text(reverb_p);
+	sysex([0x40,0x01,0x32,reverb_p]); 
+}
+
+function setreverb_time(value=0){
+	reverb_p = parseInt(value);
+	$("#rev_time").text(reverb_p);
+	sysex([0x40,0x01,0x34,reverb_p]); 
+}
+
+function setreverb_fb(value=0){
+	reverb_p = parseInt(value);
+	$("#rev_fb").text(reverb_p);
+	sysex([0x40,0x01,0x35,reverb_p]); 
+}
+
+function setchorus_lpf(value=0){
+	chorus_p = parseInt(value);
+	$("#cho_lpf").text(chorus_p);
+	sysex([0x40,0x01,0x39,chorus_p]); 
+}
+
+function setchorus_fb(value=0){
+	chorus_p = parseInt(value);
+	$("#cho_fb").text(chorus_p);
+	sysex([0x40,0x01,0x3B,chorus_p]); 	
+}
+
+function setchorus_delay(value=0){
+	chorus_p = parseInt(value);
+	$("#cho_delay").text(chorus_p);
+	sysex([0x40,0x01,0x3C,chorus_p]); 	
+}
+
+function setchorus_rate(value=0){
+	chorus_p = parseInt(value);
+	$("#cho_rate").text(chorus_p);
+	sysex([0x40,0x01,0x3D,chorus_p]); 	
+}
+
+function setchorus_depth(value=0){
+	chorus_p = parseInt(value);
+	$("#cho_depth").text(chorus_p);
+	sysex([0x40,0x01,0x3E,chorus_p]); 	
+}
+
+function setchorus_send(value=0){
+	chorus_p = parseInt(value);
+	$("#cho_send").text(chorus_p);
+	sysex([0x40,0x01,0x3F,chorus_p]); 	
+}
+
+function setchorus_level(value=0){
+	chorus = parseInt(value);
+	$("#cho_level").text(chorus);
+	sysex([0x40,0x03,0x3A,chorus]);  // Global chorus level
+	//sysex([0x40,0x03,0x18,chorus]);  // EFX Send level to chorus	
+}
+
+function setreverbtype(value){
+	var select = $("#selectReverb")[0];
+	var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
+	sysex(data);
+	$(':focus').blur();
+}
+
+function setchorustype(value){
+	var select = $("#selectChorus")[0];
+	var data = [0x40,0x01,0x38,parseInt(select.selectedIndex)];
+	sysex(data);
+	$(':focus').blur();
+}
+
+function setefxp_sendrev(value=0){
+	sendrev = parseInt(value);
+	$("#efxp_sendrev").text(sendrev);	
+	sysex([0x40,0x03,0x17,sendrev]);  // EFX Send level to reverb
+}
+
+function setefxp_sendcho(value=0){
+	sendcho = parseInt(value);
+	$("#efxp_sendcho").text(sendcho);	
+	sysex([0x40,0x03,0x18,sendcho]);  // EFX Send level to chorus	
+}
+
+function setefxp(value=0,param="1"){
+	efx_p = parseInt(value);
+	param_value = parseInt(param);
+	//alert(efx_p,param_value);
+	$("#efxp"+param).text(efx_p);	
+	sysex([0x40,0x03,param_value+2,efx_p1]);
+}
+
+function setefxtype(value){
+	var select = $("#selectEFX")[0];
+	efxtype = parseInt(select.selectedIndex);
+	//if (midioutput == null)
+	//	return;
+	switch (efxtype){
+		case 0:
+			//alert("None");
+			sysex([0x40,0x03,0x00,0x00,0x00]); //EFX OFF
+			efx_msb=0;
+			efx_lsb=0;
+			break;
+		case 1:
+			//alert("EQ1");
+			efx_msb=0x01;
+			efx_lsb=0x00;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			sysex([0x40,0x03,12,0]);  // param 9
+			efx_p1_param = 2;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 30;
+			efx_p2_param = 4;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 30;
+			efx_p3_param = 7;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_level_param = 11;
+			efx_p1 = 15;
+			efx_p2 = 15;
+			efx_p3 = 15;
+			efx_level = 127;
+			break;
+		case 2:
+			//alert("EQ2");
+			efx_msb=0x01;
+			efx_lsb=0x01;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			sysex([0x40,0x03,8,3]);  // param 9
+			efx_p1_param = 2;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 30;
+			efx_p2_param = 4;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 30;
+			efx_p3_param = 6;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_level_param = 10;
+			efx_p1 = 15;
+			efx_p2 = 15;
+			efx_p3 = 15;
+			efx_level = 127;
+			break;
+		case 3:
+			//alert("Delay");
+			efx_msb=0x01;
+			efx_lsb=0x5b;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			//sysex([0x40,0x03,3,0]);  // param 1 model ms
+			//sysex([0x40,0x03,6,0]);  // param 4 model ms
+			efx_p1_param = 10;
+			efx_p1_param_min = 49;
+			efx_p1_param_max = 89;
+			efx_p2_param = 12;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 30;
+			efx_p3_param = 13;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_level_param = 14;
+			efx_p1 = 64;
+			efx_p2 = 15;
+			efx_p3 = 15;
+			efx_level = 50;
+			break;
+		case 4:
+			//alert("Delay2");
+			efx_msb=0x01;
+			efx_lsb=0x57;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX
+			//sysex([0x40,0x03,3,0]);  // param 1 model ms
+			//sysex([0x40,0x03,6,0]);  // param 4 model ms
+			efx_p1_param = 10;
+			efx_p1_param_min = 49;
+			efx_p1_param_max = 89;
+			efx_p2_param = 12;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 30;
+			efx_p3_param = 13;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_level_param = 14;
+			efx_p1 = 64;
+			efx_p2 = 15;
+			efx_p3 = 15;
+			efx_level = 50;
+			break;
+		case 5:
+			//alert("Tremolo");
+			efx_msb=0x01;
+			efx_lsb=0x25;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX
+			//sysex([0x40,0x03,4,0]);  // param 2
+			efx_p1_param = 1;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 4;
+			efx_p2_param = 6;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 30;
+			efx_p3_param = 7;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_level_param = 5;
+			efx_p1 = 0;
+			efx_p2 = 15;
+			efx_p3 = 15;
+			efx_level = 80;
+			break;
+		case 6:
+			//alert("Rotary");
+			efx_msb=0x01;
+			efx_lsb=0x22;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			efx_p1_param = 1;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 1;
+			efx_p1 = 1;
+			efx_p2_param = 4;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 15;
+			efx_p2 = 7;
+			efx_p3_param = 5;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 127;
+			efx_p3 = 64;
+			efx_level_param = 11;
+			efx_level = 127;
+			break;
+		case 7:
+			//alert("Rotary2");
+			efx_msb=0x03;
+			efx_lsb=0x00;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			efx_p1_param = 9;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 1;
+			efx_p1 = 1;
+			efx_p2_param = 1;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 1;
+			efx_p2 = 1;
+			efx_p3_param = 7;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 127;
+			efx_p3 = 64;
+			efx_level_param = 19;
+			efx_level = 127;
+			break;
+		case 8:
+			//alert("Overdrive");
+			efx_msb=0x01;
+			efx_lsb=0x12;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			efx_p1_param = 1;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 127;
+			efx_p1 = 64;
+			efx_p2_param = 2;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 127;
+			efx_p2 = 64;
+			efx_p3_param = 5;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_p3 = 15;
+			efx_level_param = 8;
+			efx_level = 127;
+			break;
+		case 9:
+			//alert("Distortion");
+			efx_msb=0x01;
+			efx_lsb=0x13;
+			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
+			efx_p1_param = 1;
+			efx_p1_param_min = 0;
+			efx_p1_param_max = 127;
+			efx_p1 = 64;
+			efx_p2_param = 2;
+			efx_p2_param_min = 0;
+			efx_p2_param_max = 127;
+			efx_p2 = 64;
+			efx_p3_param = 5;
+			efx_p3_param_min = 0;
+			efx_p3_param_max = 30;
+			efx_p3 = 15;
+			efx_level_param = 8;
+			efx_level = 127;
+			break;
+		default:
+			break;
+	}
+	
+	if ((efx_msb!=0)||(efx_lsb!=0)){
+		$("#efxlevel")[0].value = efx_level;
+		$("#efx").text(efx_level); 
+		sysex([0x40,0x03,0x17,parseInt(reverb)]);  // Send level to reverb
+		sysex([0x40,0x03,0x18,parseInt(chorus)]);  // Send level to chorus
+		sysex([0x40,0x03,0x1A,127]);  // EFX Depth 100%
+		
+		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,64,64]);  // Coonnect part to EFX	
+		//alert(efx_p3_param_max);
+		setefxp1(efx_p1);
+		setefxp1(efx_p2);
+		setefxp1(efx_p3);
+		$("#efxparam1")[0].min = efx_p1_param_min;
+		$("#efxparam1")[0].max = efx_p1_param_max;
+		$("#efxparam1")[0].value = efx_p1;
+		$("#efxp1").text(efx_p1);
+		$("#efxparam2")[0].min = efx_p2_param_min;
+		$("#efxparam2")[0].max = efx_p2_param_max;
+		$("#efxparam2")[0].value = efx_p2;
+		$("#efxp2").text(efx_p2);
+		$("#efxparam3")[0].min = efx_p3_param_min;
+		$("#efxparam3")[0].max = efx_p3_param_max;
+		$("#efxparam3")[0].value = efx_p3;
+		$("#efxp3").text(efx_p3);
+		}		
+	$(':focus').blur();
+}
+
+function initDevices(midi) {
+
+  // MIDI devices that send you data.
+  const inputs = midi.inputs.values();
+  for (let input = inputs.next(); input && !input.done; input = inputs.next()) {
+    midiIn.push(input.value);
+  }
+  
+  // MIDI devices that you send data to.
+  const outputs = midi.outputs.values();
+  for (let output = outputs.next(); output && !output.done; output = outputs.next()) {
+    midiOut.push(output.value);
+  }
+  
+  var select = document.getElementById("selectInterface");
+  var options = midiIn;
+  for(var i = 0; i < options.length; i++) {
+    var opt = options[i].name;
+    var el = document.createElement("option");
+    el.textContent = opt;
+    el.value = opt;
+	// Automatic connection to Roland Digital Piano
+	if ((opt == "Roland Digital Piano")||(opt == "FP-30")||(opt == "FP30")){
+		el.selected = true;
+		midiinput = midiIn[i];  // Connect midi input
+		for (var i=0;i<midiOut.length;i++)
+			if (midiOut[i].name == interfacename){			
+				midioutput = midiOut[i]  // Connect midioutput
+				//alert("Connected to: "+midioutput.name)
+				$("#con").text("Connected!");
+				$("#con").css("color","#008000");
+				break;
+				}
+		}
+    select.appendChild(el);
+	}  
+  
+}
+
+function selectedInterface(){
+  var selectint = document.getElementById("selectInterface");
+  if (selectint.selectedIndex==0){
+	$("#con").text("Not connected!");
+	$("#con").css("color","#CCC");
+	midioutput = null;
+	return;
+	}
+  //alert(selectint.options[selectint.selectedIndex].index);
+  var interfacename = midiIn[selectint.options[selectint.selectedIndex].index-1].name
+  //alert(interfacename);
+  // Search this name on midi outputs
+  midioutput = null;
+  for (var i=0;i<midiOut.length;i++)
+	if (midiOut[i].name == interfacename){
+		// Connect midioutput
+		midioutput = midiOut[i]
+		//alert("Connected to: "+midioutput.name)
+		$("#con").text("Connected!");
+		$("#con").css("color","#008000");
+		break;
+	}
+  
+  midiinput = midiIn[selectint.options[selectint.selectedIndex].index-1]
+  //alert(midiinput.name);
+  // Reset
+  part=0;  
+  //reset();
+  $(':focus').blur();
+}
+
+function onMIDISuccess( midiAccess ) {
+  
+  console.log( "MIDI sucess!" );
+  midi = midiAccess
+  initDevices(midi);
+}
+
+function onMIDIFailure(msg) {
+  console.log( "Failed to get MIDI access - " + msg );
+  alert("Failed to get MIDI access - " + msg)
+}
+
+function stayawake(){
+	process_dummy++;
+}
+
+function setup(){
+	navigator.requestMIDIAccess({sysex:true}).then( onMIDISuccess, onMIDIFailure );		
+	processID = setInterval(stayawake(), 10000);
+}
+
+</script>
+</head>
+<body onload="setup();">
+	<div><h2>FP30 Playground Global params v0.1</h2></div>
+	<div>
+		<select id="selectInterface">
+			<option>Choose Midi interface</option>
+		</select>
+		<label id="con" style="color:#777;font-size:11pt;">&nbsp;Not connected</label>
+	</div>
+	<fieldset>
+	<div>
+		<label for="selectReverb" style="color:#777;font-size:11pt;">Reverb type:</label>
+		<select id="selectReverb" style="font-size:12pt;">
+			<option>Room1</option><option>Room2</option><option>Room3</option><option>Hall1</option><option selected="selected">Hall2(def)</option><option>Plate</option><option>Delay</option><option>Pan delay</option>
+		</select>				
+		<label for="selectChorus" style="color:#777;font-size:11pt;">Chorus type:</label>
+		<select id="selectChorus" style="font-size:12pt;">
+			<option>Chorus1</option><option>Chorus2</option><option selected="selected">Chorus3(def)</option><option>Chorus4</option><option>Feedback Chorus</option><option>Flanger</option><option>Short delay</option><option>Short Delay FB</option>
+		</select>
+	</div>	
+	<div><input type="range" min="0" max="127" value="15" class="slider" id="reverb" oninput="setreverb_level(this.value);"><label class="labslide">Reverb</label><label class="labslide" id="rev_level">15</label></div>
+	<div><input type="range" min="0" max="127" value="0" class="slider" id="chorus" oninput="setchorus_level(this.value);"><label class="labslide">Chorus</label><label class="labslide" id="cho_level">0</label></div>
+	<fieldset></fieldset>
+	<div><input type="range" min="0" max="7" value="4" class="slider" id="reverb_cha" oninput="setreverb_cha(this.value);" style="width: 50%;"><label class="labslide">Reverb Character</label><label class="labslide" id="rev_cha">4</label></div>
+	<div><input type="range" min="0" max="7" value="0" class="slider" id="reverb_lpf" oninput="setreverb_lpf(this.value);" style="width: 50%;"><label class="labslide">Reverb Pre-LPF</label><label class="labslide" id="rev_lpf">0</label></div>
+	<div><input type="range" min="0" max="127" value="64" class="slider" id="reverb_time" oninput="setreverb_time(this.value);" style="width: 50%;"><label class="labslide">Reverb time</label><label class="labslide" id="rev_time">64</label></div>
+	<div><input type="range" min="0" max="127" value="0" class="slider" id="reverb_fb" oninput="setreverb_fb(this.value);" style="width: 50%;"><label class="labslide">Reverb Delay FB</label><label class="labslide" id="rev_fb">0</label></div>
+	<fieldset></fieldset>
+	<div><input type="range" min="0" max="7" value="0" class="slider" id="chorus_lpf" oninput="setchorus_lpf(this.value);" style="width: 50%;"><label class="labslide">Chorus Pre-LPF</label><label class="labslide" id="cho_lpf">0</label></div>
+	<div><input type="range" min="0" max="127" value="8" class="slider" id="chorus_fb" oninput="setchorus_fb(this.value);" style="width: 50%;"><label class="labslide">Chorus Feedback</label><label class="labslide" id="cho_fb">8</label></div>
+	<div><input type="range" min="0" max="127" value="80" class="slider" id="chorus_delay" oninput="setchorus_delay(this.value);" style="width: 50%;"><label class="labslide">Chorus Delay</label><label class="labslide" id="cho_delay">80</label></div>
+	<div><input type="range" min="0" max="127" value="3" class="slider" id="chorus_rate" oninput="setchorus_rate(this.value);" style="width: 50%;"><label class="labslide">Chorus Rate</label><label class="labslide" id="cho_rate">3</label></div>
+	<div><input type="range" min="0" max="127" value="19" class="slider" id="chorus_depth" oninput="setchorus_depth(this.value);" style="width: 50%;"><label class="labslide">Chorus Depth</label><label class="labslide" id="cho_depth">19</label></div>
+	<div><input type="range" min="0" max="127" value="0" class="slider" id="chorus_send" oninput="setchorus_send(this.value);" style="width: 50%;"><label class="labslide">Chorus Send to Rev</label><label class="labslide" id="cho_send">0</label></div>
+	</fieldset>
+	<fieldset>
+	<div>
+		<label for="selectEFX" style="color:#777;font-size:11pt;">EFX(*):</label>
+		<select id="selectEFX" style="font-size:12pt;">
+			<option selected="selected">None</option><option>EQ1</option><option>EQ2</option><option>Delay1</option><option>Delay2</option><option>Tremolo</option><option>Rotary</option><option>Rotary2</option><option>Overdrive</option><option>Distortion</option>
+		</select>		
+		<label for="selectEFX" style="color:#777;font-size:11pt;">Tremolo and delay time controlled with piano tempo (fast/slow buttons)</label>
+	</div>
+	<div>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam1" oninput="setefxp(this.value,1);"><label class="labslide">P1</label><label class="labslide" id="efxp1">0</label>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam2" oninput="setefxp(this.value,2);"><label class="labslide">P2</label><label class="labslide" id="efxp2">0</label>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam3" oninput="setefxp(this.value,3);"><label class="labslide">P3</label><label class="labslide" id="efxp3">0</label>
+	</div>	
+	<div>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam4" oninput="setefxp(this.value,4);"><label class="labslide">P4</label><label class="labslide" id="efxp4">0</label>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam5" oninput="setefxp(this.value,5);"><label class="labslide">P5</label><label class="labslide" id="efxp5">0</label>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam6" oninput="setefxp(this.value,6);"><label class="labslide">P6</label><label class="labslide" id="efxp6">0</label>
+	</div>	
+	<div>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam7" oninput="setefxp(this.value,7);"><label class="labslide">P7</label><label class="labslide" id="efxp7">0</label>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam8" oninput="setefxp(this.value,8);"><label class="labslide">P8</label><label class="labslide" id="efxp8">0</label>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam9" oninput="setefxp(this.value,9);"><label class="labslide">P9</label><label class="labslide" id="efxp9">0</label>
+	</div>	
+	<div>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam10" oninput="setefxp(this.value,10);"><label class="labslide">P7</label><label class="labslide" id="efxp10">0</label>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam11" oninput="setefxp(this.value,11);"><label class="labslide">P8</label><label class="labslide" id="efxp11">0</label>
+		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam12" oninput="setefxp(this.value,12);"><label class="labslide">P9</label><label class="labslide" id="efxp12">0</label>
+	</div>	
+	<div>
+	<fieldset></fieldset>
+	<div><input type="range" min="0" max="127" value="0" class="slider" style="width: 50%;" id="efxp_reverb" oninput="setefxp_sendrev(this.value);"><label class="labslide">EFX send Reverb</label><label class="labslide" id="efxp_sendrev">0</label></div>
+	<div><input type="range" min="0" max="127" value="0" class="slider" style="width: 50%;" id="efxp_chorus" oninput="setefxp_sendcho(this.value);"><label class="labslide">EFX send Chorus</label><label class="labslide" id="efxp_sendcho">0</label></div>
+	</div>
+	</fieldset>
+	<fieldset style="padding-top:40px">
+	</fieldset>
+	<script>
+	$("#selectInterface")[0].addEventListener("change",function(event,data){selectedInterface();});
+	$("#selectReverb")[0].addEventListener("change",function(event,data){setreverbtype();});
+	$("#selectChorus")[0].addEventListener("change",function(event,data){setchorustype();});
+	</script>
+</body>
+</html>
