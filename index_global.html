@@ -591,20 +591,20 @@ function initDevices(midi) {
     el.textContent = opt;
     el.value = opt;
 	// Automatic connection to Roland Digital Piano
-	if ((opt == "Roland Digital Piano")||(opt == "FP-30")||(opt == "FP30")){
-		el.selected = true;
-		midiinput = midiIn[i];  // Connect midi input
-		for (var i=0;i<midiOut.length;i++)
-			if (midiOut[i].name == interfacename){			
-				midioutput = midiOut[i]  // Connect midioutput
-				//alert("Connected to: "+midioutput.name)
-				$("#con").text("Connected!");
-				$("#con").css("color","#008000");
-				break;
-				}
-		}
+	//if ((opt == "Roland Digital Piano")||(opt == "FP-30")||(opt == "FP30")){
+	//	el.selected = true;
+	//	midiinput = midiIn[i];  // Connect midi input
+	//	for (var i=0;i<midiOut.length;i++)
+	//		if (midiOut[i].name == interfacename){			
+	//			midioutput = midiOut[i]  // Connect midioutput
+	//			//alert("Connected to: "+midioutput.name)
+	//			$("#con").text("Connected!");
+	//			$("#con").css("color","#008000");
+	//			break;
+	//			}
+	//	}
     select.appendChild(el);
-	}  
+    }  
   
 }
 
@@ -663,7 +663,7 @@ function setup(){
 </script>
 </head>
 <body onload="setup();">
-	<div><h2>FP30 Playground Global params v0.1</h2></div>
+	<div><h2>FP30 Playground Global params v0.2</h2></div>
 	<div>
 		<select id="selectInterface">
 			<option>Choose Midi interface</option>
