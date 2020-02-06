@@ -294,7 +294,7 @@ function setchorus_send(value=0){
 function setchorus_level(value=0){
 	chorus = parseInt(value);
 	$("#cho_level").text(chorus);
-	sysex([0x40,0x03,0x3A,chorus]);  // Global chorus level
+	sysex([0x40,0x01,0x3A,chorus]);  // Global chorus level
 	//sysex([0x40,0x03,0x18,chorus]);  // EFX Send level to chorus	
 }
 
@@ -684,7 +684,7 @@ function setup(){
 	<div><input type="range" min="0" max="127" value="15" class="slider" id="reverb" oninput="setreverb_level(this.value);"><label class="labslide">Reverb</label><label class="labslide" id="rev_level">15</label></div>
 	<div><input type="range" min="0" max="127" value="0" class="slider" id="chorus" oninput="setchorus_level(this.value);"><label class="labslide">Chorus</label><label class="labslide" id="cho_level">0</label></div>
 	<fieldset></fieldset>
-	<div><input type="range" min="0" max="7" value="4" class="slider" id="reverb_cha" oninput="setreverb_cha(this.value);" style="width: 50%;"><label class="labslide">Reverb Character</label><label class="labslide" id="rev_cha">4</label></div>
+	<div><input type="range" min="0" max="7" value="4" class="slider" id="reverb_char" oninput="setreverb_char(this.value);" style="width: 50%;"><label class="labslide">Reverb Character</label><label class="labslide" id="rev_char">4</label></div>
 	<div><input type="range" min="0" max="7" value="0" class="slider" id="reverb_lpf" oninput="setreverb_lpf(this.value);" style="width: 50%;"><label class="labslide">Reverb Pre-LPF</label><label class="labslide" id="rev_lpf">0</label></div>
 	<div><input type="range" min="0" max="127" value="64" class="slider" id="reverb_time" oninput="setreverb_time(this.value);" style="width: 50%;"><label class="labslide">Reverb time</label><label class="labslide" id="rev_time">64</label></div>
 	<div><input type="range" min="0" max="127" value="0" class="slider" id="reverb_fb" oninput="setreverb_fb(this.value);" style="width: 50%;"><label class="labslide">Reverb Delay FB</label><label class="labslide" id="rev_fb">0</label></div>
