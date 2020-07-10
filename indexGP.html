@@ -211,6 +211,12 @@ function reset(){
 		}
 }
 
+function setmastervolumen(value=127){
+	$("#volM").text(value);
+	if (midioutput)
+		midioutput.send([0xf0,0x7f,0x7f,0x04,0x01,0x00,value,0xf7]);
+}
+
 function setvolumen(value=127){
 	$("#vol").text(value);
 	if (midioutput)
@@ -224,7 +230,7 @@ function setvolumen1(value=127){
 }
 
 function setvolumen5(value=127){
-	$("#vol").text(value);
+	$("#vol5").text(value);
 	if (midioutput)
 		midioutput.send([0xb0+4,0x07,value]); //CH5
 }
@@ -282,15 +288,17 @@ function setchorus(value=0){
 
 function setreverbtype(value){
 	var select = $("#selectReverb")[0];
-	var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
-	sysex(data);
+	//var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
+	//sysex(data);
+	midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x01,0x00,parseInt(select.selectedIndex),0xf7]);
 	$(':focus').blur();
 }
 
 function setchorustype(value){
 	var select = $("#selectChorus")[0];
-	var data = [0x40,0x01,0x38,parseInt(select.selectedIndex)];
-	sysex(data);
+	//var data = [0x40,0x01,0x38,parseInt(select.selectedIndex)];
+	//sysex(data);
+	midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x02,0x00,parseInt(select.selectedIndex),0xf7]);
 	$(':focus').blur();
 }
 
@@ -708,9 +716,10 @@ function echoMIDIMessage( event ) {
   //console.log(event.data)
   if (midiloopback && midioutput) {
 	if ((midisustain)||(event.data[0]<176)){
-		console.log(event.data);
-		midimsg = event.data;
-		
+		//console.log(event.data);
+		//midimsg = event.data;
+		// Loop on channel 5
+		event.data[0] = event.data[0] + 4 // We receive on channel1 and output on channel5
 		midioutput.send( event.data, event.timestamp );
 		}
   }
@@ -961,12 +970,13 @@ function setup(){
 		<label id="con" style="color:#777;font-size:11pt;">&nbsp;Not connected</label>
 	</div>
 	<fieldset>
-	<div style="margin-top:10px;">
+	<!--<div style="margin-top:10px;">
+		<label style="font-size:12pt;">Enable Layer sound (DUAL):&nbsp;&nbsp;</label>
 		<input type="checkbox" id="cbox1" onchange="selectmidilocal(this);"> <label style="font-size:12pt;">Main keyboard (Midi local)</label>
-	</div>	
+	</div>	-->
 	<div style="margin-bottom:5px;">	
-		<input type="checkbox" id="cbox2" checked="checked" onchange="selectloopback(this);"> <label style="font-size:12pt;">Dual sound (Midi loopback CH5)&nbsp;&nbsp;</label>
-		<input type="checkbox" id="midisustain" checked="checked" onchange="selectmidisustain(this);"> <label style="font-size:12pt;">Sustain(CC)</label>
+		<input type="checkbox" id="cbox2"  onchange="selectloopback(this);"> <label style="font-size:12pt;">Dual sound (Midi loopback CH5)&nbsp;&nbsp;</label>
+		<input type="checkbox" id="midisustain"  onchange="selectmidisustain(this);"> <label style="font-size:12pt;">Sustain(CC)</label>
 	</div>
 	</fieldset>
 	<fieldset>
@@ -981,34 +991,25 @@ function setup(){
 		<select id="selectSound1" name="selectSound1"></select>	
 		<select id="selectSound2" name="selectSound2"></select>		
 	</div>	
+	<fieldset>
+	<div><input type="range" min="0" max="127" value="127" class="slider" id="volumenM" oninput="setmastervolumen(this.value);"><label class="labslide">Master Volume</label><label class="labslide" id="volM">127</label></div>
+	</fieldset>
 	</fieldset>
 	<div><input type="range" min="0" max="127" value="127" class="slider" id="volumen" oninput="setvolumen1(this.value);"><label class="labslide">Volume Main</label><label class="labslide" id="vol">127</label></div>
-	<div><input type="range" min="0" max="127" value="127" class="slider" id="volumen" oninput="setvolumen5(this.value);"><label class="labslide">Volume Dual</label><label class="labslide" id="vol">127</label></div>
+	<div><input type="range" min="0" max="127" value="127" class="slider" id="volumen" oninput="setvolumen5(this.value);"><label class="labslide">Volume Dual</label><label class="labslide" id="vol5">127</label></div>
 	<div>
 		<label for="selectReverb" style="color:#777;font-size:11pt;">Reverb type:</label>
 		<select id="selectReverb" style="font-size:12pt;">
-			<option>Room1</option><option>Room2</option><option>Room3</option><option>Hall1</option><option selected="selected">Hall2(def)</option><option>Plate</option><option>Delay</option><option>Pan delay</option>
+			<option>Room1</option><option>Room2</option><option>Room3</option><option>Hall1</option><option selected="selected">Hall2</option><option>Plate</option>
 		</select>				
 		<label for="selectChorus" style="color:#777;font-size:11pt;">Chorus type:</label>
 		<select id="selectChorus" style="font-size:12pt;">
-			<option>Chorus1</option><option>Chorus2</option><option selected="selected">Chorus3(def)</option><option>Chorus4</option><option>Feedback Chorus</option><option>Flanger</option><option>Short delay</option><option>Short Delay FB</option>
+			<option>Chorus1</option><option>Chorus2</option><option selected="selected">Chorus3</option><option>Chorus4</option><option>FB Chorus</option><option>Flanger</option>
 		</select>
 	</div>	
 	<div><input type="range" min="0" max="127" value="15" class="slider" id="reverb" oninput="setreverb(this.value);"><label class="labslide">Reverb</label><label class="labslide" id="rev">15</label></div>
 	<div><input type="range" min="0" max="127" value="0" class="slider" id="chorus" oninput="setchorus(this.value);"><label class="labslide">Chorus</label><label class="labslide" id="cho">0</label></div>
-	<div>
-		<label for="selectEFX" style="color:#777;font-size:11pt;">EFX(*):</label>
-		<select id="selectEFX" style="font-size:12pt;">
-			<option selected="selected">None</option><option>EQ1</option><option>EQ2</option><option>Delay1</option><option>Delay2</option><option>Tremolo</option><option>Rotary</option><option>Rotary2</option><option>Overdrive</option><option>Distortion</option>
-		</select>		
-		<label for="selectEFX" style="color:#777;font-size:11pt;">Tremolo and delay time controlled with piano tempo (fast/slow buttons)</label>
-	</div>
-	<div>
-		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam1" oninput="setefxp1(this.value);"><label class="labslide">P1</label><label class="labslide" id="efxp1">0</label>
-		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam2" oninput="setefxp2(this.value);"><label class="labslide">P2</label><label class="labslide" id="efxp2">0</label>
-		<input type="range" min="0" max="127" value="0" class="slider" style="width: 18%;" id="efxparam3" oninput="setefxp3(this.value);"><label class="labslide">P3</label><label class="labslide" id="efxp3">0</label>
-	</div>
-	<div><input type="range" min="0" max="127" value="0" class="slider" id="efxlevel" oninput="setefxlevel(this.value);"><label class="labslide">EFX level</label><label class="labslide" id="efx">0</label></div>
+	
 	<fieldset style="height:1px;margin:0px;padding:0px;"></fieldset>
 	<div>
 		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="attack" oninput="setattack(this.value);">
@@ -1052,8 +1053,8 @@ function setup(){
 		<input type="range" min="0" max="127" value="0" class="slider" style="height:10px;width:60%;" id="slidecc" oninput="setslidecc(this.value);">		
 		<label class="labslide" id="cclabel">0</label>
 	</div>
-	<button style="width:auto;height:auto;margin:12px;" onclick="reset();setvolumen(127);">RESET MIDI</button>
-	<fieldset style="height:15px;margin:5px;padding:0px;"></fieldset>
+	<button style="width:auto;height:40px;margin:12px;" onclick="reset();setvolumen(127);">RESET MIDI</button>
+	<fieldset style="height:25px;margin:5px;padding:0px;"></fieldset>
 	
 	<script>
 	$("#selectInterface")[0].addEventListener("change",function(event,data){selectedInterface();});
@@ -1062,7 +1063,7 @@ function setup(){
 	//$("#radioset").buttonset();
 	$("#selectReverb")[0].addEventListener("change",function(event,data){setreverbtype();});
 	$("#selectChorus")[0].addEventListener("change",function(event,data){setchorustype();});
-	$("#selectEFX")[0].addEventListener("change",function(event,data){setefxtype();});
+	//$("#selectEFX")[0].addEventListener("change",function(event,data){setefxtype();});
 	$("#myCanvas")[0].width=$("#canvasdiv").width();
 	canvasgrid($("#myCanvas")[0]);	
 	</script>
