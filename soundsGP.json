@@ -20,7 +20,7 @@
 	  {
         "Set": "Roland",
         "Category": " Piano",
-        "PC": "2",
+        "PC": "3",
         "MSB": "73",
         "LSB": "87",
         "content": "European Pf"
@@ -32,6 +32,54 @@
         "MSB": "73",
         "LSB": "87",
         "content": "Go Grand 2"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " Piano",
+        "PC": "5",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "ConcertGrand"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " Piano",
+        "PC": "6",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Mellow Grand"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " Piano",
+        "PC": "7",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Honky-Tonk"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " Piano",
+        "PC": "8",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Go Grand+Str"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " Piano",
+        "PC": "9",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Go Grand+Pad"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " Piano",
+        "PC": "10",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "CoupleHarpsi"
       },
       {
         "Set": "Roland",
