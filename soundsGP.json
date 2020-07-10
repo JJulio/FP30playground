@@ -513,13 +513,61 @@
         "LSB": "67",
         "content": "SymphonicStr1"
       },
-      {
+	  {
         "Set": "Roland",
-        "Category": " Strings",
-        "PC": "50",
-        "MSB": "1",
-        "LSB": "65",
-        "content": "SymphonicStr2"
+        "Category": " GO Organ",
+        "PC": "18",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "FullDraw Org"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Organ",
+        "PC": "19",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "FullDrawSlow"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Organ",
+        "PC": "20",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "FullDrawFast"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Organ",
+        "PC": "21",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Perc Organ"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Organ",
+        "PC": "22",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Chapel Organ"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Organ",
+        "PC": "23",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Positive Organ"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Organ",
+        "PC": "24",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Accordion"
       },
       {
         "Set": "Roland",
@@ -760,6 +808,134 @@
         "MSB": "0",
         "LSB": "67",
         "content": "Tron Strings"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "25",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Jazz Scat"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "26",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Voice Doo"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "27",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Choir Aahs"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "28",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Strings"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "29",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Violin"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "30",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Flute"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "31",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Trombone"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "32",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "SoftNyln Gtr"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "33",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Vibraphone"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "34",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Saw Lead"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "35",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Super SynPad"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "36",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Jump Bass"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "37",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Fingered Bass"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "38",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Acoustic Bass"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "39",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Standard Kit"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO Other",
+        "PC": "40",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "SFX Kit"
       },
       {
         "Set": "Roland",
