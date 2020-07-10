@@ -930,7 +930,7 @@ function stayawake(){
 
 function setup(){
 	navigator.requestMIDIAccess({sysex:true}).then( onMIDISuccess, onMIDIFailure );	
-	$.getJSON( "https://jjulio.github.io/FP30playground/sounds.json", function(data) {
+	$.getJSON( "https://jjulio.github.io/FP30playground/soundsGP.json", function(data) {
 		console.log( "sounds load success" );
 		sounds = data["voices"]
 		var select1 = $("#selectSound1")[0];
