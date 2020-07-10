@@ -3,7 +3,7 @@
     "voice": [
 	{
         "Set": "Roland",
-        "Category": " Piano",
+        "Category": " GO Piano",
         "PC": "1",
         "MSB": "0",
         "LSB": "68",
@@ -11,7 +11,7 @@
       },
 	  {
         "Set": "Roland",
-        "Category": " Piano",
+        "Category": " GO Piano",
         "PC": "2",
         "MSB": "73",
         "LSB": "87",
@@ -19,7 +19,7 @@
       },
 	  {
         "Set": "Roland",
-        "Category": " Piano",
+        "Category": " GO Piano",
         "PC": "3",
         "MSB": "73",
         "LSB": "87",
@@ -27,7 +27,7 @@
       },
 	  {
         "Set": "Roland",
-        "Category": " Piano",
+        "Category": " GO Piano",
         "PC": "4",
         "MSB": "73",
         "LSB": "87",
@@ -35,7 +35,7 @@
       },
 	  {
         "Set": "Roland",
-        "Category": " Piano",
+        "Category": " GO Piano",
         "PC": "5",
         "MSB": "73",
         "LSB": "87",
@@ -43,7 +43,7 @@
       },
 	  {
         "Set": "Roland",
-        "Category": " Piano",
+        "Category": " GO Piano",
         "PC": "6",
         "MSB": "73",
         "LSB": "87",
@@ -51,7 +51,7 @@
       },
 	  {
         "Set": "Roland",
-        "Category": " Piano",
+        "Category": " GO Piano",
         "PC": "7",
         "MSB": "73",
         "LSB": "87",
@@ -59,7 +59,7 @@
       },
 	  {
         "Set": "Roland",
-        "Category": " Piano",
+        "Category": " GO Piano",
         "PC": "8",
         "MSB": "73",
         "LSB": "87",
@@ -67,7 +67,7 @@
       },
 	  {
         "Set": "Roland",
-        "Category": " Piano",
+        "Category": " GO Piano",
         "PC": "9",
         "MSB": "73",
         "LSB": "87",
@@ -75,7 +75,7 @@
       },
 	  {
         "Set": "Roland",
-        "Category": " Piano",
+        "Category": " GO Piano",
         "PC": "10",
         "MSB": "73",
         "LSB": "87",
@@ -200,6 +200,62 @@
         "MSB": "8",
         "LSB": "67",
         "content": "Harpsi 8'+4'"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO E.Piano",
+        "PC": "11",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Vintage EP"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO E.Piano",
+        "PC": "12",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Phase EP"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO E.Piano",
+        "PC": "13",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "TremEP Stage"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO E.Piano",
+        "PC": "14",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Wurly Trem"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO E.Piano",
+        "PC": "15",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "FM Chorus EP"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO E.Piano",
+        "PC": "16",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "D50 Fantasia"
+      },
+	  {
+        "Set": "Roland",
+        "Category": " GO E.Piano",
+        "PC": "17",
+        "MSB": "73",
+        "LSB": "87",
+        "content": "Clavi"
       },
       {
         "Set": "Roland",
