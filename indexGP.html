@@ -170,14 +170,14 @@ var efx_level=0;
 var reverb = 40;
 var chorus = 0;
 
-var midiloopback = true;
+var midiloopback = false;
 var midilocal = false;
-var midisustain = true;
+var midisustain = false;
 
 var processID;
 var process_dummy=0;
 
-var sysex_init=[0xF0,0x41,0x10,0x42,0x12];
+var sysex_init=[0xF0,0x41,0x10,0x42,0x12]; 
 var sysex_end=[0xF7];
 
 function checksum(data){  //Roland checksum for sysex
@@ -269,9 +269,9 @@ function setreverb(value=0){
 	$("#rev").text(reverb);
 	if (midioutput){
 		midioutput.send([0xb0+part,91,reverb]);
-		if ((efx_msb!=0)||(efx_lsb!=0)){
-			sysex([0x40,0x03,0x17,reverb]);  // Send level to reverb
-			}
+		//if ((efx_msb!=0)||(efx_lsb!=0)){
+		//	sysex([0x40,0x03,0x17,reverb]);  // Send level to reverb
+		//	}
 		}
 }
 
@@ -280,9 +280,9 @@ function setchorus(value=0){
 	$("#cho").text(chorus);
 	if (midioutput){
 		midioutput.send([0xb0+part,93,chorus]);
-		if ((efx_msb!=0)||(efx_lsb!=0)){
-			sysex([0x40,0x03,0x18,chorus]);  // Send level to chorus
-			}
+		//if ((efx_msb!=0)||(efx_lsb!=0)){
+		//	sysex([0x40,0x03,0x18,chorus]);  // Send level to chorus
+		//	}
 		}
 }
 
@@ -962,7 +962,7 @@ function setup(){
 </script>
 </head>
 <body onload="setup();">
-	<div><h2>Go Piano Playground v0.1</h2></div>
+	<div><h2>Go Piano Playground v0.2</h2></div>
 	<div>
 		<select id="selectInterface">
 			<option>Choose Midi interface</option>
