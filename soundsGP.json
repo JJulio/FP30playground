@@ -13,72 +13,63 @@
         "Set": "Roland",
         "Category": " GO Piano",
         "PC": "2",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Bright Grand"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Piano",
         "PC": "3",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "European Pf"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Piano",
         "PC": "4",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Go Grand 2"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Piano",
         "PC": "5",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "ConcertGrand"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Piano",
         "PC": "6",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Mellow Grand"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Piano",
         "PC": "7",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Honky-Tonk"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Piano",
         "PC": "8",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Go Grand+Str"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Piano",
         "PC": "9",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Go Grand+Pad"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Piano",
         "PC": "10",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "CoupleHarpsi"
       },
       {
@@ -205,56 +196,49 @@
         "Set": "Roland",
         "Category": " GO E.Piano",
         "PC": "11",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Vintage EP"
       },
 	  {
         "Set": "Roland",
         "Category": " GO E.Piano",
         "PC": "12",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Phase EP"
       },
 	  {
         "Set": "Roland",
         "Category": " GO E.Piano",
         "PC": "13",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "TremEP Stage"
       },
 	  {
         "Set": "Roland",
         "Category": " GO E.Piano",
         "PC": "14",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Wurly Trem"
       },
 	  {
         "Set": "Roland",
         "Category": " GO E.Piano",
         "PC": "15",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "FM Chorus EP"
       },
 	  {
         "Set": "Roland",
         "Category": " GO E.Piano",
         "PC": "16",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "D50 Fantasia"
       },
 	  {
         "Set": "Roland",
         "Category": " GO E.Piano",
         "PC": "17",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Clavi"
       },
       {
@@ -517,56 +501,49 @@
         "Set": "Roland",
         "Category": " GO Organ",
         "PC": "18",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "FullDraw Org"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Organ",
         "PC": "19",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "FullDrawSlow"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Organ",
         "PC": "20",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "FullDrawFast"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Organ",
         "PC": "21",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Perc Organ"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Organ",
         "PC": "22",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Chapel Organ"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Organ",
         "PC": "23",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Positive Organ"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Organ",
         "PC": "24",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Accordion"
       },
       {
@@ -813,128 +790,112 @@
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "25",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Jazz Scat"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "26",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Voice Doo"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "27",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Choir Aahs"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "28",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Strings"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "29",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Violin"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "30",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Flute"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "31",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Trombone"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "32",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "SoftNyln Gtr"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "33",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Vibraphone"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "34",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Saw Lead"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "35",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Super SynPad"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "36",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Jump Bass"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "37",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Fingered Bass"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "38",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Acoustic Bass"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "39",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "Standard Kit"
       },
 	  {
         "Set": "Roland",
         "Category": " GO Other",
         "PC": "40",
-        "MSB": "73",
-        "LSB": "87",
+        "MSB": "87","LSB": "73",
         "content": "SFX Kit"
       },
       {
