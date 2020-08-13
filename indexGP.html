@@ -294,6 +294,14 @@ function setreverbtype(value){
 	$(':focus').blur();
 }
 
+function setreverbtime(value=64){
+	//var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
+	//sysex(data);
+	$("#labelrevtime").text(value);
+	$("#revtime")[0].value=value;
+	midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x01,0x01,value,0xf7]);
+}
+
 function setchorustype(value){
 	var select = $("#selectChorus")[0];
 	//var data = [0x40,0x01,0x38,parseInt(select.selectedIndex)];
@@ -302,276 +310,13 @@ function setchorustype(value){
 	$(':focus').blur();
 }
 
-function setefxlevel(value){
-	efx_level = parseInt(value);
-	$("#efx").text(efx_level);
-	//sysex([0x40,0x03,0x1A,parseInt(value)]);		
-	//if ((efx_msb!=0)||(efx_lsb!=0)){
-	//sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
-	//sysex([0x40,0x03,0x1A,efx_level]);
-	sysex([0x40,0x03,parseInt(efx_level_param)+2,efx_level]);
-	//	}
+function setchorussend(value=64){
+	//var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
+	//sysex(data);
+	$("#labelchorussend").text(value);
+	$("#chorussend")[0].value=value;
+	midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x02,0x04,value,0xf7]);
 }
-
-function setefxp1(value=0){
-	efx_p1 = parseInt(value);
-	$("#efxp1").text(efx_p1);	
-	//if ((efx_msb!=0)||(efx_lsb!=0)){
-	//sysex([0x40,0x41+part,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);	
-	//}
-	sysex([0x40,0x03,parseInt(efx_p1_param)+2,efx_p1]);
-}
-
-function setefxp2(value=0){
-	efx_p2 = parseInt(value);
-	$("#efxp2").text(efx_p2);	
-	//if ((efx_msb!=0)||(efx_lsb!=0)){
-	// PART!!
-	//sysex([0x40,0x4+part1,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
-	//}
-	sysex([0x40,0x03,parseInt(efx_p2_param)+2,efx_p2]);
-}
-function setefxp3(value=0){
-	efx_p3 = parseInt(value);
-	$("#efxp3").text(efx_p3);	
-	//if ((efx_msb!=0)||(efx_lsb!=0)){
-	// PART!!
-	//sysex([0x40,0x4+part1,0x23,efx_msb,efx_lsb,0,parseInt(efx_level),parseInt(efx_p1),parseInt(efx_p2)]);
-	//}
-	sysex([0x40,0x03,parseInt(efx_p3_param)+2,efx_p3]);
-}
-
-function setefxtype(value){
-	var select = $("#selectEFX")[0];
-	efxtype = parseInt(select.selectedIndex);
-	//if (midioutput == null)
-	//	return;
-	switch (efxtype){
-		case 0:
-			//alert("None");
-			sysex([0x40,0x03,0x00,0x00,0x00]); //EFX OFF
-			efx_msb=0;
-			efx_lsb=0;
-			break;
-		case 1:
-			//alert("EQ1");
-			efx_msb=0x01;
-			efx_lsb=0x00;
-			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			sysex([0x40,0x03,12,0]);  // param 9
-			efx_p1_param = 2;
-			efx_p1_param_min = 0;
-			efx_p1_param_max = 30;
-			efx_p2_param = 4;
-			efx_p2_param_min = 0;
-			efx_p2_param_max = 30;
-			efx_p3_param = 7;
-			efx_p3_param_min = 0;
-			efx_p3_param_max = 30;
-			efx_level_param = 11;
-			efx_p1 = 15;
-			efx_p2 = 15;
-			efx_p3 = 15;
-			efx_level = 127;
-			break;
-		case 2:
-			//alert("EQ2");
-			efx_msb=0x01;
-			efx_lsb=0x01;
-			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			sysex([0x40,0x03,8,3]);  // param 9
-			efx_p1_param = 2;
-			efx_p1_param_min = 0;
-			efx_p1_param_max = 30;
-			efx_p2_param = 4;
-			efx_p2_param_min = 0;
-			efx_p2_param_max = 30;
-			efx_p3_param = 6;
-			efx_p3_param_min = 0;
-			efx_p3_param_max = 30;
-			efx_level_param = 10;
-			efx_p1 = 15;
-			efx_p2 = 15;
-			efx_p3 = 15;
-			efx_level = 127;
-			break;
-		case 3:
-			//alert("Delay");
-			efx_msb=0x01;
-			efx_lsb=0x5b;
-			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			//sysex([0x40,0x03,3,0]);  // param 1 model ms
-			//sysex([0x40,0x03,6,0]);  // param 4 model ms
-			efx_p1_param = 10;
-			efx_p1_param_min = 49;
-			efx_p1_param_max = 89;
-			efx_p2_param = 12;
-			efx_p2_param_min = 0;
-			efx_p2_param_max = 30;
-			efx_p3_param = 13;
-			efx_p3_param_min = 0;
-			efx_p3_param_max = 30;
-			efx_level_param = 14;
-			efx_p1 = 64;
-			efx_p2 = 15;
-			efx_p3 = 15;
-			efx_level = 50;
-			break;
-		case 4:
-			//alert("Delay2");
-			efx_msb=0x01;
-			efx_lsb=0x57;
-			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX
-			//sysex([0x40,0x03,3,0]);  // param 1 model ms
-			//sysex([0x40,0x03,6,0]);  // param 4 model ms
-			efx_p1_param = 10;
-			efx_p1_param_min = 49;
-			efx_p1_param_max = 89;
-			efx_p2_param = 12;
-			efx_p2_param_min = 0;
-			efx_p2_param_max = 30;
-			efx_p3_param = 13;
-			efx_p3_param_min = 0;
-			efx_p3_param_max = 30;
-			efx_level_param = 14;
-			efx_p1 = 64;
-			efx_p2 = 15;
-			efx_p3 = 15;
-			efx_level = 50;
-			break;
-		case 5:
-			//alert("Tremolo");
-			efx_msb=0x01;
-			efx_lsb=0x25;
-			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX
-			//sysex([0x40,0x03,4,0]);  // param 2
-			efx_p1_param = 1;
-			efx_p1_param_min = 0;
-			efx_p1_param_max = 4;
-			efx_p2_param = 6;
-			efx_p2_param_min = 0;
-			efx_p2_param_max = 30;
-			efx_p3_param = 7;
-			efx_p3_param_min = 0;
-			efx_p3_param_max = 30;
-			efx_level_param = 5;
-			efx_p1 = 0;
-			efx_p2 = 15;
-			efx_p3 = 15;
-			efx_level = 80;
-			break;
-		case 6:
-			//alert("Rotary");
-			efx_msb=0x01;
-			efx_lsb=0x22;
-			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			efx_p1_param = 1;
-			efx_p1_param_min = 0;
-			efx_p1_param_max = 1;
-			efx_p1 = 1;
-			efx_p2_param = 4;
-			efx_p2_param_min = 0;
-			efx_p2_param_max = 15;
-			efx_p2 = 7;
-			efx_p3_param = 5;
-			efx_p3_param_min = 0;
-			efx_p3_param_max = 127;
-			efx_p3 = 64;
-			efx_level_param = 11;
-			efx_level = 127;
-			break;
-		case 7:
-			//alert("Rotary2");
-			efx_msb=0x03;
-			efx_lsb=0x00;
-			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			efx_p1_param = 9;
-			efx_p1_param_min = 0;
-			efx_p1_param_max = 1;
-			efx_p1 = 1;
-			efx_p2_param = 1;
-			efx_p2_param_min = 0;
-			efx_p2_param_max = 1;
-			efx_p2 = 1;
-			efx_p3_param = 7;
-			efx_p3_param_min = 0;
-			efx_p3_param_max = 127;
-			efx_p3 = 64;
-			efx_level_param = 19;
-			efx_level = 127;
-			break;
-		case 8:
-			//alert("Overdrive");
-			efx_msb=0x01;
-			efx_lsb=0x12;
-			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			efx_p1_param = 1;
-			efx_p1_param_min = 0;
-			efx_p1_param_max = 127;
-			efx_p1 = 64;
-			efx_p2_param = 2;
-			efx_p2_param_min = 0;
-			efx_p2_param_max = 127;
-			efx_p2 = 64;
-			efx_p3_param = 5;
-			efx_p3_param_min = 0;
-			efx_p3_param_max = 30;
-			efx_p3 = 15;
-			efx_level_param = 8;
-			efx_level = 127;
-			break;
-		case 9:
-			//alert("Distortion");
-			efx_msb=0x01;
-			efx_lsb=0x13;
-			sysex([0x40,0x03,0x00,efx_msb,efx_lsb]);  // EFX 
-			efx_p1_param = 1;
-			efx_p1_param_min = 0;
-			efx_p1_param_max = 127;
-			efx_p1 = 64;
-			efx_p2_param = 2;
-			efx_p2_param_min = 0;
-			efx_p2_param_max = 127;
-			efx_p2 = 64;
-			efx_p3_param = 5;
-			efx_p3_param_min = 0;
-			efx_p3_param_max = 30;
-			efx_p3 = 15;
-			efx_level_param = 8;
-			efx_level = 127;
-			break;
-		default:
-			break;
-	}
-	
-	if ((efx_msb!=0)||(efx_lsb!=0)){
-		$("#efxlevel")[0].value = efx_level;
-		$("#efx").text(efx_level); 
-		sysex([0x40,0x03,0x17,parseInt(reverb)]);  // Send level to reverb
-		sysex([0x40,0x03,0x18,parseInt(chorus)]);  // Send level to chorus
-		sysex([0x40,0x03,0x1A,127]);  // EFX Depth 100%
-		
-		sysex([0x40,0x41,0x23,efx_msb,efx_lsb,0,127,64,64]);  // Coonnect part to EFX	
-		//alert(efx_p3_param_max);
-		setefxp1(efx_p1);
-		setefxp1(efx_p2);
-		setefxp1(efx_p3);
-		$("#efxparam1")[0].min = efx_p1_param_min;
-		$("#efxparam1")[0].max = efx_p1_param_max;
-		$("#efxparam1")[0].value = efx_p1;
-		$("#efxp1").text(efx_p1);
-		$("#efxparam2")[0].min = efx_p2_param_min;
-		$("#efxparam2")[0].max = efx_p2_param_max;
-		$("#efxparam2")[0].value = efx_p2;
-		$("#efxp2").text(efx_p2);
-		$("#efxparam3")[0].min = efx_p3_param_min;
-		$("#efxparam3")[0].max = efx_p3_param_max;
-		$("#efxparam3")[0].value = efx_p3;
-		$("#efxp3").text(efx_p3);
-		}		
-	$(':focus').blur();
-}
-
 
 function setresonance(value=64,inc=0){
 	if (inc!=0)
@@ -971,7 +716,7 @@ function setup(){
 </script>
 </head>
 <body onload="setup();">
-	<div><h2>Go Piano Playground v0.21</h2></div>
+	<div><h2>Go Piano Playground v0.22</h2></div>
 	<div>
 		<select id="selectInterface">
 			<option>Choose Midi interface</option>
@@ -1017,7 +762,9 @@ function setup(){
 		</select>
 	</div>	
 	<div><input type="range" min="0" max="127" value="15" class="slider" id="reverb" oninput="setreverb(this.value);"><label class="labslide">Reverb</label><label class="labslide" id="rev">15</label></div>
+	<div><input type="range" min="0" max="127" value="64" class="slider" id="revtime" oninput="setreverbtime(this.value);"><label class="labelrevtime">Reverb time</label><label class="labslide" id="rev">64</label></div>
 	<div><input type="range" min="0" max="127" value="0" class="slider" id="chorus" oninput="setchorus(this.value);"><label class="labslide">Chorus</label><label class="labslide" id="cho">0</label></div>
+	<div><input type="range" min="0" max="127" value="64" class="slider" id="chorussend" oninput="setchorussend(this.value);"><label class="labelchorussend">Chorus send</label><label class="labslide" id="rev">64</label></div>
 	
 	<fieldset style="height:1px;margin:0px;padding:0px;"></fieldset>
 	<div>
@@ -1046,6 +793,21 @@ function setup(){
 		<label class="labslide">Decay</label><label class="labslide" id="dec">64</label>
 	</div>
 	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="CC76" oninput="setCC(76,this.value);">
+		<button onclick="setCC(76,0,1);">+</button><button onclick="setCC(76,0,-1);">-</button><button onclick="setCC(76,64);">R</button>
+		<label class="labslide">VibratoRate</label><label class="labslide" id="labelCC76">64</label>
+	</div>
+	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="CC77" oninput="setCC(77,this.value);">
+		<button onclick="setCC(77,0,1);">+</button><button onclick="setCC(77,0,-1);">-</button><button onclick="setCC(77,64);">R</button>
+		<label class="labslide">VibratoDep</label><label class="labslide" id="labelCC77">64</label>
+	</div>
+	<div>
+		<input type="range" min="40" max="127" value="127" class="slider" style="width:50%;" id="CC78" oninput="setCC(78,this.value);">
+		<button onclick="setCC(78,0,1);">+</button><button onclick="setCC(78,0,-1);">-</button><button onclick="setCC(78,127);">R</button>
+		<label class="labslide">VibratoDel</label><label class="labslide" id="labelCC78">127</label>
+	</div>
+	<div>
 		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="CC80" oninput="setCC(80,this.value);">
 		<button onclick="setCC(80,0,1);">+</button><button onclick="setCC(80,0,-1);">-</button><button onclick="setCC(80,64);">R</button>
 		<label class="labslide">Action mod</label><label class="labslide" id="labelCC80">64</label>
@@ -1059,8 +821,7 @@ function setup(){
 	<fieldset style="margin:2px;padding:0px;">
 	<div style="margin:2px;padding:0px;"><label>Pitch Bend(<-->)</label><label class="labslide" id="pblabel">64</label><label> - Modulation(up)</label><label class="labslide" id="molabel">0</label></div>
 	<div style="width:98%;margin:0px;padding:0px;" id="canvasdiv"><canvas id="myCanvas" width="100" height="160" 
-		onmousedown="canvasdown(this);" onmousemove="canvasmove(this);" onmouseup="canvasup(this);" 
-		ontouchend="canvastend(this);" ontouchstart="canvaststart(this);" ontouchmove="canvastmove(this);"></canvas>
+		onmousedown="canvasdown(this);" onmousemove="canvasmove(this);" onmouseup="canvasup(this);" ontouchend="canvastend(this);" ontouchstart="canvaststart(this);" ontouchmove="canvastmove(this);"></canvas>
 	</div>
 	</fieldset>
 	<label>Sound PC:</label><input type="text" id="pc" value="1">
