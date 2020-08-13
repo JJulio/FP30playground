@@ -618,6 +618,15 @@ function setdecay(value=64,inc=0){
 		midioutput.send([0xb0+part,75,value]);
 }
 
+function setCC(CCval=80,value=64,inc=0){
+	if (inc!=0)
+		value = parseInt($("#CC"+str(CCval))[0].value)+inc;
+	$("#labelCC"+str(CCval)).text(value);
+	$("#CC"+str(CCval))[0].value=value;
+	if (midioutput)
+		midioutput.send([0xb0+part,CCval,value]);
+}
+
 function setpcbank(){	
 	var pc = $("#pc").val();
 	var msb = $("#msb").val();
@@ -1012,29 +1021,39 @@ function setup(){
 	
 	<fieldset style="height:1px;margin:0px;padding:0px;"></fieldset>
 	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="cutoff" oninput="setcutoff(this.value);">
+		<button onclick="setcutoff(0,1);">+</button><button onclick="setcutoff(0,-1);">-</button><button onclick="setcutoff(64);">R</button>
+		<label class="labslide">Brightness</label><label class="labslide" id="cut">64</label>
+	</div>
+	<div>
 		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="attack" oninput="setattack(this.value);">
 		<button onclick="setattack(0,1);">+</button><button onclick="setattack(0,-1);">-</button><button onclick="setattack(64);">R</button>
 		<label class="labslide">Attack</label><label class="labslide" id="att">64</label>
 	</div>
 	<div>
-	<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="release" oninput="setrelease(this.value);">
-	<button onclick="setrelease(0,1);">+</button><button onclick="setrelease(0,-1);">-</button><button onclick="setrelease(64);">R</button>
-	<label class="labslide">Release</label><label class="labslide" id="rel">64</label>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="release" oninput="setrelease(this.value);">
+		<button onclick="setrelease(0,1);">+</button><button onclick="setrelease(0,-1);">-</button><button onclick="setrelease(64);">R</button>
+		<label class="labslide">Release</label><label class="labslide" id="rel">64</label>
 	</div>
 	<div>
-	<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="resonance" oninput="setresonance(this.value);">
-	<button onclick="setresonance(0,1);">+</button><button onclick="setresonance(0,-1);">-</button><button onclick="setresonance(64);">R</button>
-	<label class="labslide">Resonance</label><label class="labslide" id="res">64</label>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="resonance" oninput="setresonance(this.value);">
+		<button onclick="setresonance(0,1);">+</button><button onclick="setresonance(0,-1);">-</button><button onclick="setresonance(64);">R</button>
+		<label class="labslide">Resonance</label><label class="labslide" id="res">64</label>
+	</div>	
+	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="decay" oninput="setdecay(this.value);">
+		<button onclick="setdecay(0,1);">+</button><button onclick="setdecay(0,-1);">-</button><button onclick="setdecay(64);">R</button>
+		<label class="labslide">Decay</label><label class="labslide" id="dec">64</label>
 	</div>
 	<div>
-	<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="cutoff" oninput="setcutoff(this.value);">
-	<button onclick="setcutoff(0,1);">+</button><button onclick="setcutoff(0,-1);">-</button><button onclick="setcutoff(64);">R</button>
-	<label class="labslide">Cutoff</label><label class="labslide" id="cut">64</label>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="CC80" oninput="setCC(80,this.value);">
+		<button onclick="setCC(80,0,1);">+</button><button onclick="setCC(80,0,-1);">-</button><button onclick="setCC(80,64);">R</button>
+		<label class="labslide">Action mod</label><label class="labslide" id="labelCC80">64</label>
 	</div>
 	<div>
-	<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="decay" oninput="setdecay(this.value);">
-	<button onclick="setdecay(0,1);">+</button><button onclick="setdecay(0,-1);">-</button><button onclick="setdecay(64);">R</button>
-	<label class="labslide">Decay</label><label class="labslide" id="dec">64</label>
+		<input type="range" min="40" max="127" value="127" class="slider" style="width:50%;" id="CC81" oninput="setCC(81,this.value);">
+		<button onclick="setCC(81,0,1);">+</button><button onclick="setCC(81,0,-1);">-</button><button onclick="setCC(81,127);">R</button>
+		<label class="labslide">Action compression</label><label class="labslide" id="labelCC81">127</label>
 	</div>
 	<!--<fieldset style="margin:0px;padding:0px;">-->
 	<fieldset style="margin:2px;padding:0px;">
