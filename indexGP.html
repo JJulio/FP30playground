@@ -290,7 +290,9 @@ function setreverbtype(value){
 	var select = $("#selectReverb")[0];
 	//var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
 	//sysex(data);
-	midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x01,0x00,parseInt(select.selectedIndex),0xf7]);
+	if (midioutput){
+		midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x01,0x00,parseInt(select.selectedIndex),0xf7]);
+		}
 	$(':focus').blur();
 }
 
@@ -299,14 +301,18 @@ function setreverbtime(value=64){
 	//sysex(data);
 	$("#labelrevtime").text(value);
 	$("#revtime")[0].value=value;
-	midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x01,0x01,value,0xf7]);
+	if (midioutput){
+		midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x01,0x01,value,0xf7]);
+		}
 }
 
 function setchorustype(value){
 	var select = $("#selectChorus")[0];
 	//var data = [0x40,0x01,0x38,parseInt(select.selectedIndex)];
 	//sysex(data);
-	midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x02,0x00,parseInt(select.selectedIndex),0xf7]);
+	if (midioutput){
+		midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x02,0x00,parseInt(select.selectedIndex),0xf7]);
+		}
 	$(':focus').blur();
 }
 
@@ -315,7 +321,9 @@ function setchorussend(value=64){
 	//sysex(data);
 	$("#labelchorussend").text(value);
 	$("#chorussend")[0].value=value;
-	midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x02,0x04,value,0xf7]);
+	if (midioutput){
+		midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x02,0x04,value,0xf7]);
+		}
 }
 
 function setresonance(value=64,inc=0){
@@ -762,9 +770,9 @@ function setup(){
 		</select>
 	</div>	
 	<div><input type="range" min="0" max="127" value="15" class="slider" id="reverb" oninput="setreverb(this.value);"><label class="labslide">Reverb</label><label class="labslide" id="rev">15</label></div>
-	<div><input type="range" min="0" max="127" value="64" class="slider" id="revtime" oninput="setreverbtime(this.value);"><label class="labelrevtime">Reverb time</label><label class="labslide" id="rev">64</label></div>
+	<div><input type="range" min="0" max="127" value="64" class="slider" id="revtime" oninput="setreverbtime(this.value);"><label class="labslide">Reverb time</label><label class="labslide" id="labelrevtime">64</label></div>
 	<div><input type="range" min="0" max="127" value="0" class="slider" id="chorus" oninput="setchorus(this.value);"><label class="labslide">Chorus</label><label class="labslide" id="cho">0</label></div>
-	<div><input type="range" min="0" max="127" value="64" class="slider" id="chorussend" oninput="setchorussend(this.value);"><label class="labelchorussend">Chorus send</label><label class="labslide" id="rev">64</label></div>
+	<div><input type="range" min="0" max="127" value="64" class="slider" id="chorussend" oninput="setchorussend(this.value);"><label class="labslide">Chorus send</label><label class="labslide" id="labelchorussend">64</label></div>
 	
 	<fieldset style="height:1px;margin:0px;padding:0px;"></fieldset>
 	<div>
