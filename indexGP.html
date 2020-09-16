@@ -169,6 +169,7 @@ var efx_p3=0;
 var efx_level=0;
 var reverb = 40;
 var chorus = 0;
+var loopbackoctave=0;
 
 var midiloopback = false;
 var midilocal = false;
@@ -406,6 +407,12 @@ function changepart(value){
 	setexpression(127);
 }
 
+function changeoctave(value){
+	//alert(value);
+	loopbackoctave = value;
+	console.log( "octave:",loopbackoctave );
+}
+
 function selectedSound1(){
 	var select = $("#selectSound1")[0];
 	//alert("SS1:"+select.selectedIndex);
@@ -482,6 +489,8 @@ function echoMIDIMessage( event ) {
 		//midimsg = event.data;
 		// Loop on channel 5
 		event.data[0] = event.data[0] + 4 // We receive on channel1 and output on channel5
+		if (loopbackoctave!=0)
+			event.data[1] + loopbackoctave*12;
 		midioutput.send( event.data, event.timestamp );
 		}
   }
@@ -724,7 +733,7 @@ function setup(){
 </script>
 </head>
 <body onload="setup();">
-	<div><h2>Go Piano Playground v0.22</h2></div>
+	<div><h2>Go Piano Playground v0.23</h2></div>
 	<div>
 		<select id="selectInterface">
 			<option>Choose Midi interface</option>
@@ -739,6 +748,12 @@ function setup(){
 	<div style="margin-bottom:5px;">	
 		<input type="checkbox" id="cbox2"  onchange="selectloopback(this);"> <label style="font-size:12pt;">Dual sound (Midi loopback CH5)&nbsp;&nbsp;</label>
 		<input type="checkbox" id="midisustain"  onchange="selectmidisustain(this);"> <label style="font-size:12pt;">Sustain(CC)</label>
+		
+		<div id="radiosetoctave" style="padding:0px;margin:0px;font-size:10pt;">
+			<input type="radio" id="octavedown" name="radio2" onchange="changeoctave(-1);" ><label style="font-size:12pt;">Octave down</label>
+			<input type="radio" id="octavenormal" name="radio2" onchange="changeoctave(0);" checked="checked"><label style="font-size:12pt;">Same octave</label>
+			<input type="radio" id="octaveup" name="radio2" onchange="changeoctave(1);"><label style="font-size:12pt;">Octave up</label>
+		</div>
 	</div>
 	</fieldset>
 	<fieldset>
@@ -818,12 +833,12 @@ function setup(){
 	<div>
 		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="CC80" oninput="setCC(80,this.value);">
 		<button onclick="setCC(80,0,1);">+</button><button onclick="setCC(80,0,-1);">-</button><button onclick="setCC(80,64);">R</button>
-		<label class="labslide">Action mod</label><label class="labslide" id="labelCC80">64</label>
+		<label class="labslide">Action mod1</label><label class="labslide" id="labelCC80">64</label>
 	</div>
 	<div>
 		<input type="range" min="40" max="127" value="127" class="slider" style="width:50%;" id="CC81" oninput="setCC(81,this.value);">
 		<button onclick="setCC(81,0,1);">+</button><button onclick="setCC(81,0,-1);">-</button><button onclick="setCC(81,127);">R</button>
-		<label class="labslide">Action compression</label><label class="labslide" id="labelCC81">127</label>
+		<label class="labslide">Action mod2</label><label class="labslide" id="labelCC81">127</label>
 	</div>
 	<!--<fieldset style="margin:0px;padding:0px;">-->
 	<fieldset style="margin:2px;padding:0px;">
