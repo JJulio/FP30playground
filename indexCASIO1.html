@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Casio Piano playground webmidi</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">	
+	<meta name="mobile-web-app-capable" content="yes">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>	
+<style>
+
+    body{
+	font-family:verdana,sans-serif;
+	font-size:12pt;
+	background-color:#333;
+	margin:5px,5px,5px,5px;
+	-webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+	}
+	
+	h2{
+	color:#ccc;
+	margin-left:4px;
+	}
+	
+	fieldset{
+		font-size:11pt;
+		margin:0px;
+		padding:0px;
+		border-color:#777;
+		border-radius: 8px;
+		width:100%;
+	}
+	
+	select{
+		height:32px;
+		font-size:14pt;
+		font-weight:bold;
+		border-radius: 5px;
+		background:#ddd;
+		color:#333;
+	}
+	
+	option{
+		font-size:13pt;		
+	}
+	
+	input[type=checkbox]{
+	-ms-transform: scale(1.5); /* IE */
+	-moz-transform: scale(1.5); /* FF */
+	-webkit-transform: scale(1.5); /* Safari and Chrome */
+	-o-transform: scale(1.5); /* Opera */
+	transform: scale(1.5);
+	padding:0px;
+	margin:0px;
+	}
+	input[type=radio]{
+	-ms-transform: scale(1.5); /* IE */
+	-moz-transform: scale(1.5); /* FF */
+	-webkit-transform: scale(1.5); /* Safari and Chrome */
+	-o-transform: scale(1.5); /* Opera */
+	transform: scale(1.5);
+	padding:10px;
+	margin:10px;	
+	}
+	
+	input[type=text]{
+		width:38px;
+		background:#555;
+		color:#eee;
+		border:1;
+	}
+	
+	button{
+	width:30px;
+	height:30px;
+	font-size:11pt;
+	border-radius: 4px;
+	background-color:#555;
+	color:#ddd;
+	}
+	
+	div{
+	margin-left:10px;
+	margin-right:10px;
+	margin-top:20px;
+	margin-bottom:20px;
+	}
+	
+	label{
+	color:#ccc;
+	margin:3px;		
+	}
+	
+	.labslide{
+	font-size:10pt;
+	color:#ccc;
+	margin:3px;
+	}
+
+.slider {
+  -webkit-appearance: none;
+  width: 50%;
+  height: 15px;
+  border-radius: 5px;  
+  background: #888;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 34px;
+  border-color:#000;
+  border-width:1px;
+  border-radius: 30%; 
+  background: #6ad;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 30px;
+  height: 30px;
+  border-color:#000;
+  border-width:1px;
+  border-radius: 30%;
+  background: #6ad;
+  cursor: pointer;
+}
+
+  canvas{
+  background: #aaa;
+  border-radius: 6px;
+  margin:5px;
+  }
+</style>
+<script type="text/javascript">
+var midi = null;  // global MIDIAccess object
+var midiinput = null;
+var midioutput = null;
+var midiIn = [];
+var midiOut = [];
+var sounds=null;
+var part=0;
+var efx_msb=0;
+var efx_lsb=0;
+var efx_p1_param=0;
+var efx_p2_param=0;
+var efx_p3_param=0;
+var efx_p1_param_min=0;
+var efx_p1_param_max=0;
+var efx_p2_param_min=0;
+var efx_p2_param_max=0;
+var efx_p3_param_min=0;
+var efx_p3_param_max=0;
+var efx_level_param=0;
+var efx_p1=0;
+var efx_p2=0;
+var efx_p3=0;
+var efx_level=0;
+var reverb = 40;
+var chorus = 0;
+var loopbackoctave=0;
+
+var midiloopback = false;
+var midilocal = false;
+var midisustain = false;
+
+var processID;
+var process_dummy=0;
+
+var sysex_init=[0xF0,0x41,0x10,0x42,0x12]; 
+var sysex_end=[0xF7];
+
+function checksum(data){  //Roland checksum for sysex
+  var check = 0;
+  for (i=0;i<data.length;i++)
+    check = check+data[i];
+  check = check % 128;
+  check = 128-check;
+  return check;
+}
+
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
+function reset(){
+	if (midioutput){
+		midioutput.send([0xb0,0x78,0x00]); // All sounds off
+		midioutput.send([0xb2,0x78,0x00]);
+		midioutput.send([0xb4,0x78,0x00]);
+		midioutput.send([0xb0,0x7B,0x00]); // All notes off
+		midioutput.send([0xb2,0x7B,0x00]);
+		midioutput.send([0xb4,0x7B,0x00]);
+		midioutput.send([0xb0,0x79,0x00]); //#Reset all
+		midioutput.send([0xb2,0x79,0x00]);
+		midioutput.send([0xb4,0x79,0x00]);
+		}
+}
+
+function setmastervolumen(value=127){
+	$("#volM").text(value);
+	if (midioutput)
+		midioutput.send([0xf0,0x7f,0x7f,0x04,0x01,0x00,value,0xf7]);
+}
+
+function setvolumen(value=127){
+	$("#vol").text(value);
+	if (midioutput)
+		midioutput.send([0xb0+part,0x07,value]);
+}
+
+function setvolumen1(value=127){
+	$("#vol").text(value);
+	if (midioutput)
+		midioutput.send([0xb0+0,0x07,value]); //CH1
+}
+
+function setvolumen5(value=127){
+	$("#vol5").text(value);
+	if (midioutput)
+		midioutput.send([0xb0+4,0x07,value]); //CH5
+}
+
+function setmodulation(value=0){
+	$("#molabel").text(value);
+	if (midioutput)
+		midioutput.send([0xb0+part,1,value]);
+}
+
+function setpitchbend(value=64){
+	$("#pblabel").text(value);
+	if (midioutput)
+		midioutput.send([0xe0+part,0,value]);
+}
+
+function setexpression(value=127){
+	if (midioutput)
+		midioutput.send([0xb0+part,0x11,value]);
+}
+
+function sysex(data){
+	//if (1==1){
+	if(midioutput){	
+		msg = sysex_init;
+		msg = msg.concat(data);
+		msg = msg.concat(parseInt(checksum(data)));
+		msg = msg.concat(sysex_end);
+		midioutput.send(msg);
+		sleep(50);
+		}
+}
+
+function setreverb(value=0){
+	reverb = parseInt(value);
+	$("#rev").text(reverb);
+	if (midioutput){
+		midioutput.send([0xb0+part,91,reverb]);
+		//if ((efx_msb!=0)||(efx_lsb!=0)){
+		//	sysex([0x40,0x03,0x17,reverb]);  // Send level to reverb
+		//	}
+		}
+}
+
+function setchorus(value=0){
+	chorus = parseInt(value);
+	$("#cho").text(chorus);
+	if (midioutput){
+		midioutput.send([0xb0+part,93,chorus]);
+		//if ((efx_msb!=0)||(efx_lsb!=0)){
+		//	sysex([0x40,0x03,0x18,chorus]);  // Send level to chorus
+		//	}
+		}
+}
+
+function setreverbtype(value){
+	var select = $("#selectReverb")[0];
+	//var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
+	//sysex(data);
+	if (midioutput){
+		midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x01,0x00,parseInt(select.selectedIndex),0xf7]);
+		}
+	$(':focus').blur();
+}
+
+function setreverbtime(value=64){
+	//var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
+	//sysex(data);
+	$("#labelrevtime").text(value);
+	$("#revtime")[0].value=value;
+	if (midioutput){
+		midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x01,0x01,value,0xf7]);
+		}
+}
+
+function setchorustype(value){
+	var select = $("#selectChorus")[0];
+	//var data = [0x40,0x01,0x38,parseInt(select.selectedIndex)];
+	//sysex(data);
+	if (midioutput){
+		midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x02,0x00,parseInt(select.selectedIndex),0xf7]);
+		}
+	$(':focus').blur();
+}
+
+function setchorussend(value=64){
+	//var data = [0x40,0x01,0x30,parseInt(select.selectedIndex)];
+	//sysex(data);
+	$("#labelchorussend").text(value);
+	$("#chorussend")[0].value=value;
+	if (midioutput){
+		midioutput.send([0xf0,0x7f,0x7f,0x04,0x05,0x01,0x01,0x01,0x01,0x02,0x04,value,0xf7]);
+		}
+}
+
+function setresonance(value=64,inc=0){
+	if (inc!=0)
+		value = parseInt($("#resonance")[0].value)+inc;
+	$("#res").text(value);
+	$("#resonance")[0].value=value;
+	if (midioutput)
+		midioutput.send([0xb0+part,71,value]);
+}
+
+function setrelease(value=64,inc=0){
+	if (inc!=0)
+		value = parseInt($("#release")[0].value)+inc;
+	$("#rel").text(value);
+	$("#release")[0].value=value;
+	if (midioutput)
+		midioutput.send([0xb0+part,72,value]);
+}
+
+function setattack(value=64,inc=0){
+	if (inc!=0)
+		value = parseInt($("#attack")[0].value)+inc;		
+	$("#att").text(value);
+	$("#attack")[0].value=value;
+	if (midioutput)
+		midioutput.send([0xb0+part,73,value]);
+}
+
+function setcutoff(value=64,inc=0){
+	if (inc!=0)
+		value = parseInt($("#cutoff")[0].value)+inc;
+	$("#cut").text(value);
+	$("#cutoff")[0].value=value;
+	if (midioutput)
+		midioutput.send([0xb0+part,74,value]);
+}
+
+function setdecay(value=64,inc=0){
+	if (inc!=0)
+		value = parseInt($("#decay")[0].value)+inc;
+	$("#dec").text(value);
+	$("#decay")[0].value=value;
+	if (midioutput)
+		midioutput.send([0xb0+part,75,value]);
+}
+
+function setCC(CCval=80,value=64,inc=0){
+	if (inc!=0)
+		value = parseInt($("#CC"+CCval.toString())[0].value)+inc;
+	$("#labelCC"+CCval.toString()).text(value);
+	$("#CC"+CCval.toString())[0].value=value;
+	if (midioutput)
+		midioutput.send([0xb0+part,CCval,value]);
+}
+
+function setpcbank(){	
+	var pc = $("#pc").val();
+	var msb = $("#msb").val();
+	var lsb = $("#lsb").val();
+	//alert (pc+" "+msb+" "+lsb);
+	if (midioutput){
+		midioutput.send([0xb0+part,0x00,msb]);  // bank msb  
+		midioutput.send([0xb0+part,0x20,lsb]);  // bank lsb
+		midioutput.send([0xc0+part,pc-1]);        // program change
+		}
+}
+
+function setslidecc(value=0){
+	$("#cclabel").text(value);
+	var cc = $("#cc").val();
+	//alert("CC "+cc+" val:"+value)
+	if (midioutput)
+		midioutput.send([0xb0+part,cc,value]);
+}
+
+function changepart(value){
+	//alert(value);
+	part = value;
+	setexpression(127);
+}
+
+function changeoctave(value){
+	//alert(value);
+	loopbackoctave = value;
+	console.log( "octave:",loopbackoctave );
+}
+
+function selectedSound1(){
+	var select = $("#selectSound1")[0];
+	//alert("SS1:"+select.selectedIndex);
+	$("#selectSound2 option").each(function(index, option) {
+        $(option).remove();
+	});	
+	var select2 = $("#selectSound2")[0];	
+	for(var i = 0; i < sounds["voice"].length; i++) {
+		var group = sounds["voice"][i]["Set"]+"-"+sounds["voice"][i]["Category"];
+		if (select.value == group){
+			var opt = sounds["voice"][i]["content"]
+			var el = document.createElement("option");
+			el.textContent = opt;
+			el.value = sounds["voice"][i]["PC"]+"_"+sounds["voice"][i]["MSB"]+"_"+sounds["voice"][i]["LSB"];
+			select2.appendChild(el);			
+			}			
+		}
+	$(':focus').blur();
+	selectedSound2();
+}
+
+function selectedSound2(){
+	var select = $("#selectSound2")[0];
+	var pc = select.value.split("_")[0];
+	var msb = select.value.split("_")[1];
+	var lsb = select.value.split("_")[2];
+	//alert (pc+" "+msb+" "+lsb);
+	if (midioutput){
+		midioutput.send([0xb0+part,0x00,msb]);  // bank msb  
+		midioutput.send([0xb0+part,0x20,lsb]);  // bank lsb
+		midioutput.send([0xc0+part,pc-1]);        // program change
+		}
+	$(':focus').blur();
+	setexpression(127);
+	setattack(64);
+	setrelease(64);
+	setresonance(64);
+	setcutoff(64);
+	setdecay(64);
+	$("#pc").val(pc);
+	$("#msb").val(msb);
+	$("#lsb").val(lsb);
+	
+}
+
+function selectmidilocal(cb){
+	midilocal=cb.checked;
+	// Send midi looplocal command
+	var data=[];
+	if (midilocal)
+		data = [0xb0,0x7A,0x7F];
+	else
+		data = [0xb0,0x7A,0x00];
+	//alert("midilocal:"+midilocal);
+	if (midioutput)
+		midioutput.send(data);
+}
+
+function selectloopback(cb){
+	midiloopback=cb.checked;
+	midisustain=cb.checked; 
+	$("#midisustain")[0].checked = cb.checked;
+}
+
+function selectmidisustain(cb){
+	midisustain=cb.checked; 
+}
+
+function echoMIDIMessage( event ) {
+  //console.log(event.data)
+  if (midiloopback && midioutput) {
+	if ((midisustain)||(event.data[0]<176)){
+		//console.log(event.data);
+		//midimsg = event.data;
+		// Loop on channel 5
+		event.data[0] = event.data[0] + 4 // We receive on channel1 and output on channel5
+		if (loopbackoctave!=0)
+			event.data[1] + loopbackoctave*12;
+		midioutput.send( event.data, event.timestamp );
+		}
+  }
+}
+
+function initDevices(midi) {
+
+  // MIDI devices that send you data.
+  const inputs = midi.inputs.values();
+  for (let input = inputs.next(); input && !input.done; input = inputs.next()) {
+    midiIn.push(input.value);
+  }
+  
+  // MIDI devices that you send data to.
+  const outputs = midi.outputs.values();
+  for (let output = outputs.next(); output && !output.done; output = outputs.next()) {
+    midiOut.push(output.value);
+  }
+  
+  var select = document.getElementById("selectInterface");
+  var options = midiIn;
+  for(var i = 0; i < options.length; i++) {
+    var opt = options[i].name;
+    var el = document.createElement("option");
+    el.textContent = opt;
+    el.value = opt;
+    select.appendChild(el);
+	}
+  
+}
+
+function selectedInterface(){
+  var selectint = document.getElementById("selectInterface");
+  if (selectint.selectedIndex==0){
+	$("#con").text("Not connected!");
+	$("#con").css("color","#CCC");
+	midioutput = null;
+	return;
+	}
+  //alert(selectint.options[selectint.selectedIndex].index);
+  var interfacename = midiIn[selectint.options[selectint.selectedIndex].index-1].name
+  //alert(interfacename);
+  // Search this name on midi outputs
+  midioutput = null;
+  for (var i=0;i<midiOut.length;i++)
+	if (midiOut[i].name == interfacename){
+		// Connect midioutput
+		midioutput = midiOut[i]
+		//alert("Connected to: "+midioutput.name)
+		$("#con").text("Connected!");
+		$("#con").css("color","#008000");
+		break;
+	}
+  
+  midiinput = midiIn[selectint.options[selectint.selectedIndex].index-1]
+  midiinput.onmidimessage = echoMIDIMessage;
+  //alert(midiinput.name);
+  // Reset
+  part=0;  // CH1 default
+  selectmidilocal($("#cbox1")[0]); // set midilocal state
+  setvolumen(127);
+  setexpression(127);
+  setreverb(0x0e);
+  setchorus(0);
+  setattack(64);
+  setrelease(64);
+  setresonance(64);
+  setcutoff(64);
+  setdecay(64);
+  setpcbank()
+  reset();
+  $(':focus').blur();
+}
+
+function onMIDISuccess( midiAccess ) {
+  
+  console.log( "MIDI sucess!" );
+  midi = midiAccess
+  initDevices(midi);
+}
+
+function onMIDIFailure(msg) {
+  console.log( "Failed to get MIDI access - " + msg );
+  alert("Failed to get MIDI access - " + msg)
+}
+
+function canvastend(canvas){
+	var ctx = canvas.getContext('2d');
+	//ctx.clear();
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	canvasgrid(canvas);
+	canvas.pendown=false;	
+	setpitchbend(64);
+	setmodulation(0);
+}
+
+function canvaststart(canvas){
+	e = window.event;
+	if (e.target == canvas) {
+		e.preventDefault();
+	}
+	var touch = e.touches[0];
+	var BB = canvas.getBoundingClientRect();
+    var offsetX=BB.left;
+    var offsetY=BB.top;   
+	var x = parseInt(touch.clientX-offsetX);
+	var y = parseInt(touch.clientY-offsetY);
+	var ctx = canvas.getContext('2d');
+	ctx.fillRect(x,y, 8, 8);
+	canvas.pendown=true;
+	var centerx = canvas.width/2;
+	var centery = canvas.height/2;				
+	var pitchbend = (x-(canvas.width/2))/(canvas.width/2);
+	pitchbend = Math.sign(pitchbend)*pitchbend*pitchbend; //  exponential
+	pitchbend = Math.min(Math.max(parseInt(pitchbend*64 + 64.5), 0), 127);
+	//var pitchbend = Math.min(Math.max(parseInt((x*128)/canvas.width), 0), 127);
+	var modulation = 0;
+	if ((y-centery)<0)
+		modulation = Math.min(Math.max(parseInt((centery-y)*128/centery),0),127);
+	setpitchbend(pitchbend);
+	setmodulation(modulation);
+	//$("#pblabel").text(pitchbend+" "+x+" "+offsetX);
+	//$("#molabel").text(modulation+" "+y+" "+offsetY);
+}
+
+function canvastmove(canvas){
+	e = window.event;
+	if (e.target == canvas) {
+		e.preventDefault();
+	}
+	var touch = e.touches[0];
+	var BB = canvas.getBoundingClientRect();
+    var offsetX=BB.left;
+    var offsetY=BB.top;   
+	var x = parseInt(touch.clientX-offsetX);
+	var y = parseInt(touch.clientY-offsetY);
+	if (canvas.pendown){
+		e = window.event;
+		var ctx = canvas.getContext('2d');
+		ctx.fillRect(x,y, 8, 8);
+		var centerx = canvas.width/2;
+		var centery = canvas.height/2;				
+		var pitchbend = (x-(canvas.width/2))/(canvas.width/2);
+		pitchbend = Math.sign(pitchbend)*pitchbend*pitchbend; // exponential
+		pitchbend = Math.min(Math.max(parseInt(pitchbend*64 + 64.5), 0), 127);
+		//var pitchbend = Math.min(Math.max(parseInt((x*128)/canvas.width), 0), 127);
+		var modulation = 0;
+		if ((y-centery)<0)
+			modulation = Math.min(Math.max(parseInt((centery-y)*128/centery),0),127);
+		setpitchbend(pitchbend);
+		setmodulation(modulation);
+		//$("#pblabel").text(pitchbend+" "+x+" "+offsetX);
+		//$("#molabel").text(modulation+" "+y+" "+offsetY);
+		}
+}
+
+function canvasdown(canvas){
+	e = window.event;
+	var ctx = canvas.getContext('2d');
+	ctx.fillRect(e.offsetX, e.offsetY, 5, 5);
+	canvas.pendown=true;
+	var centerx = canvas.width/2;
+	var centery = canvas.height/2;				
+	var pitchbend = (e.offsetX-(canvas.width/2))/(canvas.width/2);
+	pitchbend = Math.sign(pitchbend)*pitchbend*pitchbend; //  exponential
+	pitchbend = Math.min(Math.max(parseInt(pitchbend*64 + 64.5), 0), 127);
+	//var pitchbend = Math.min(Math.max(parseInt((e.offsetX*128)/canvas.width), 0), 127);
+	var modulation = 0;
+	if ((e.offsetY-centery)<0)
+		modulation = Math.min(Math.max(parseInt((centery-e.offsetY)*128/centery),0),127);
+	setpitchbend(pitchbend);
+	setmodulation(modulation);	
+}
+
+function canvasmove(canvas){
+	if (canvas.pendown){
+		e = window.event;
+		var ctx = canvas.getContext('2d');
+		ctx.fillRect(e.offsetX, e.offsetY, 5, 5);
+		var centerx = canvas.width/2;
+		var centery = canvas.height/2;	
+		var pitchbend = (e.offsetX-(canvas.width/2))/(canvas.width/2);
+		pitchbend = Math.sign(pitchbend)*pitchbend*pitchbend; //exponential
+		pitchbend = Math.min(Math.max(parseInt(pitchbend*64 + 64.5), 0), 127);
+		//var pitchbend = Math.min(Math.max(parseInt((e.offsetX*128)/canvas.width), 0), 127);
+		var modulation = 0;
+		if ((e.offsetY-centery)<0)
+			modulation = Math.min(Math.max(parseInt((centery-e.offsetY)*128/centery),0),127);
+		setpitchbend(pitchbend);
+		setmodulation(modulation);		
+		}
+}
+
+function canvasup(canvas){	
+	var ctx = canvas.getContext('2d');
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	canvasgrid(canvas);
+	canvas.pendown=false;
+	setpitchbend(64);
+	setmodulation(0);
+}
+
+function canvasgrid(canvas){
+	var ctx = canvas.getContext("2d");
+	ctx.beginPath();
+	ctx.strokeStyle = "gray";
+	ctx.moveTo(0,canvas.height/2);
+	ctx.lineTo(canvas.width, canvas.height/2);
+	ctx.moveTo(canvas.width/2,0);
+	ctx.lineTo(canvas.width/2, canvas.height);
+	ctx.stroke();
+}
+
+function stayawake(){
+	process_dummy++;
+}
+
+function setup(){
+	navigator.requestMIDIAccess({sysex:true}).then( onMIDISuccess, onMIDIFailure );	
+	$.getJSON( "https://jjulio.github.io/FP30playground/soundsGP.json", function(data) {
+		console.log( "sounds load success" );
+		sounds = data["voices"]
+		var select1 = $("#selectSound1")[0];
+		var group = ""
+		for(var i = 0; i < sounds["voice"].length; i++) {
+			var newgroup = sounds["voice"][i]["Set"]+"-"+sounds["voice"][i]["Category"];
+			if (newgroup != group){
+				var el = document.createElement("option");
+				el.textContent = newgroup;
+				el.value = newgroup;
+				select1.appendChild(el);
+				group = newgroup;
+				}
+			}
+		selectedSound1();
+		});	
+	processID = setInterval(stayawake(), 10000);
+}
+
+</script>
+</head>
+<body onload="setup();">
+	<div><h2>Go Piano Playground v0.23</h2></div>
+	<div>
+		<select id="selectInterface">
+			<option>Choose Midi interface</option>
+		</select>
+		<label id="con" style="color:#777;font-size:11pt;">&nbsp;Not connected</label>
+	</div>
+	<fieldset>
+	<!--<div style="margin-top:10px;">
+		<label style="font-size:12pt;">Enable Layer sound (DUAL):&nbsp;&nbsp;</label>
+		<input type="checkbox" id="cbox1" onchange="selectmidilocal(this);"> <label style="font-size:12pt;">Main keyboard (Midi local)</label>
+	</div>	-->
+	<div style="margin-bottom:5px;">	
+		<input type="checkbox" id="cbox2"  onchange="selectloopback(this);"> <label style="font-size:12pt;">Dual sound (Midi loopback CH5)&nbsp;&nbsp;</label>
+		<input type="checkbox" id="midisustain"  onchange="selectmidisustain(this);"> <label style="font-size:12pt;">Sustain(CC)</label>
+		
+		<div id="radiosetoctave" style="padding:0px;margin:0px;font-size:10pt;">
+			<input type="radio" id="octavedown" name="radio2" onchange="changeoctave(-1);" ><label style="font-size:12pt;">Octave down</label>
+			<input type="radio" id="octavenormal" name="radio2" onchange="changeoctave(0);" checked="checked"><label style="font-size:12pt;">Same octave</label>
+			<input type="radio" id="octaveup" name="radio2" onchange="changeoctave(1);"><label style="font-size:12pt;">Octave up</label>
+		</div>
+	</div>
+	</fieldset>
+	<fieldset>
+	<div id="radioset" style="padding:0px;margin:0px;font-size:10pt;">
+		<input type="radio" id="part1" name="radio" onchange="changepart(0);" checked="checked"><label style="font-size:12pt;">CH1 (main)</label>
+		<!--<div><input type="radio" id="part3" name="radio" onchange="changepart(2);"><label style="font-size:12pt;">Part3(split)</label></div>-->
+		<input type="radio" id="part5" name="radio" onchange="changepart(4);"><label style="font-size:12pt;">CH5(dual)</label>
+	</div>
+	
+	<div style="padding:6px;margin:0px;">
+		<label for="selectSound" style="font-weight:bold;">SOUND:</label>
+		<select id="selectSound1" name="selectSound1"></select>	
+		<select id="selectSound2" name="selectSound2"></select>		
+	</div>	
+	<fieldset>
+	<div><input type="range" min="0" max="127" value="127" class="slider" id="volumenM" oninput="setmastervolumen(this.value);"><label class="labslide">Master Volume</label><label class="labslide" id="volM">127</label></div>
+	</fieldset>
+	</fieldset>
+	<div><input type="range" min="0" max="127" value="127" class="slider" id="volumen" oninput="setvolumen1(this.value);"><label class="labslide">Volume Main</label><label class="labslide" id="vol">127</label></div>
+	<div><input type="range" min="0" max="127" value="127" class="slider" id="volumen" oninput="setvolumen5(this.value);"><label class="labslide">Volume Dual</label><label class="labslide" id="vol5">127</label></div>
+	<div>
+		<label for="selectReverb" style="color:#777;font-size:11pt;">Reverb type:</label>
+		<select id="selectReverb" style="font-size:12pt;">
+			<option>Room1</option><option>Room2</option><option>Room3</option><option>Hall1</option><option selected="selected">Hall2</option><option>Plate</option>
+		</select>				
+		<label for="selectChorus" style="color:#777;font-size:11pt;">Chorus type:</label>
+		<select id="selectChorus" style="font-size:12pt;">
+			<option>Chorus1</option><option>Chorus2</option><option selected="selected">Chorus3</option><option>Chorus4</option><option>FB Chorus</option><option>Flanger</option>
+		</select>
+	</div>	
+	<div><input type="range" min="0" max="127" value="15" class="slider" id="reverb" oninput="setreverb(this.value);"><label class="labslide">Reverb</label><label class="labslide" id="rev">15</label></div>
+	<div><input type="range" min="0" max="127" value="64" class="slider" id="revtime" oninput="setreverbtime(this.value);"><label class="labslide">Reverb time</label><label class="labslide" id="labelrevtime">64</label></div>
+	<div><input type="range" min="0" max="127" value="0" class="slider" id="chorus" oninput="setchorus(this.value);"><label class="labslide">Chorus</label><label class="labslide" id="cho">0</label></div>
+	<div><input type="range" min="0" max="127" value="64" class="slider" id="chorussend" oninput="setchorussend(this.value);"><label class="labslide">Chorus send</label><label class="labslide" id="labelchorussend">64</label></div>
+	
+	<fieldset style="height:1px;margin:0px;padding:0px;"></fieldset>
+	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="cutoff" oninput="setcutoff(this.value);">
+		<button onclick="setcutoff(0,1);">+</button><button onclick="setcutoff(0,-1);">-</button><button onclick="setcutoff(64);">R</button>
+		<label class="labslide">Brightness</label><label class="labslide" id="cut">64</label>
+	</div>
+	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="attack" oninput="setattack(this.value);">
+		<button onclick="setattack(0,1);">+</button><button onclick="setattack(0,-1);">-</button><button onclick="setattack(64);">R</button>
+		<label class="labslide">Attack</label><label class="labslide" id="att">64</label>
+	</div>
+	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="release" oninput="setrelease(this.value);">
+		<button onclick="setrelease(0,1);">+</button><button onclick="setrelease(0,-1);">-</button><button onclick="setrelease(64);">R</button>
+		<label class="labslide">Release</label><label class="labslide" id="rel">64</label>
+	</div>
+	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="resonance" oninput="setresonance(this.value);">
+		<button onclick="setresonance(0,1);">+</button><button onclick="setresonance(0,-1);">-</button><button onclick="setresonance(64);">R</button>
+		<label class="labslide">Resonance</label><label class="labslide" id="res">64</label>
+	</div>	
+	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="decay" oninput="setdecay(this.value);">
+		<button onclick="setdecay(0,1);">+</button><button onclick="setdecay(0,-1);">-</button><button onclick="setdecay(64);">R</button>
+		<label class="labslide">Decay</label><label class="labslide" id="dec">64</label>
+	</div>
+	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="CC76" oninput="setCC(76,this.value);">
+		<button onclick="setCC(76,0,1);">+</button><button onclick="setCC(76,0,-1);">-</button><button onclick="setCC(76,64);">R</button>
+		<label class="labslide">VibratoRate</label><label class="labslide" id="labelCC76">64</label>
+	</div>
+	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="CC77" oninput="setCC(77,this.value);">
+		<button onclick="setCC(77,0,1);">+</button><button onclick="setCC(77,0,-1);">-</button><button onclick="setCC(77,64);">R</button>
+		<label class="labslide">VibratoDep</label><label class="labslide" id="labelCC77">64</label>
+	</div>
+	<div>
+		<input type="range" min="40" max="127" value="127" class="slider" style="width:50%;" id="CC78" oninput="setCC(78,this.value);">
+		<button onclick="setCC(78,0,1);">+</button><button onclick="setCC(78,0,-1);">-</button><button onclick="setCC(78,127);">R</button>
+		<label class="labslide">VibratoDel</label><label class="labslide" id="labelCC78">127</label>
+	</div>
+	<div>
+		<input type="range" min="0" max="127" value="64" class="slider" style="width:50%;" id="CC80" oninput="setCC(80,this.value);">
+		<button onclick="setCC(80,0,1);">+</button><button onclick="setCC(80,0,-1);">-</button><button onclick="setCC(80,64);">R</button>
+		<label class="labslide">Action mod1</label><label class="labslide" id="labelCC80">64</label>
+	</div>
+	<div>
+		<input type="range" min="40" max="127" value="127" class="slider" style="width:50%;" id="CC81" oninput="setCC(81,this.value);">
+		<button onclick="setCC(81,0,1);">+</button><button onclick="setCC(81,0,-1);">-</button><button onclick="setCC(81,127);">R</button>
+		<label class="labslide">Action mod2</label><label class="labslide" id="labelCC81">127</label>
+	</div>
+	<!--<fieldset style="margin:0px;padding:0px;">-->
+	<fieldset style="margin:2px;padding:0px;">
+	<div style="margin:2px;padding:0px;"><label>Pitch Bend(<-->)</label><label class="labslide" id="pblabel">64</label><label> - Modulation(up)</label><label class="labslide" id="molabel">0</label></div>
+	<div style="width:98%;margin:0px;padding:0px;" id="canvasdiv"><canvas id="myCanvas" width="100" height="160" 
+		onmousedown="canvasdown(this);" onmousemove="canvasmove(this);" onmouseup="canvasup(this);" ontouchend="canvastend(this);" ontouchstart="canvaststart(this);" ontouchmove="canvastmove(this);"></canvas>
+	</div>
+	</fieldset>
+	<label>Sound PC:</label><input type="text" id="pc" value="1">
+	<label>Bank MSB:</label><input type="text" id="msb" value="0">
+	<label>Bank LSB:</label><input type="text" id="lsb" value="68">
+	<button style="width:auto;height:auto;" onclick="setpcbank();">SET</button>
+	<div>
+		<label class="labslide">CC:</label><input type="text" id="cc" value="1">
+		<input type="range" min="0" max="127" value="0" class="slider" style="height:10px;width:60%;" id="slidecc" oninput="setslidecc(this.value);">		
+		<label class="labslide" id="cclabel">0</label>
+	</div>
+	<button style="width:auto;height:40px;margin:12px;" onclick="reset();setvolumen(127);">RESET MIDI</button>
+	<fieldset style="height:25px;margin:5px;padding:0px;"></fieldset>
+	
+	<script>
+	$("#selectInterface")[0].addEventListener("change",function(event,data){selectedInterface();});
+	$("#selectSound1")[0].addEventListener("change",function(event,data){selectedSound1();});
+	$("#selectSound2")[0].addEventListener("change",function(event,data){selectedSound2();});
+	//$("#radioset").buttonset();
+	$("#selectReverb")[0].addEventListener("change",function(event,data){setreverbtype();});
+	$("#selectChorus")[0].addEventListener("change",function(event,data){setchorustype();});
+	//$("#selectEFX")[0].addEventListener("change",function(event,data){setefxtype();});
+	$("#myCanvas")[0].width=$("#canvasdiv").width();
+	canvasgrid($("#myCanvas")[0]);	
+	</script>
+</body>
+</html>
