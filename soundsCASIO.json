@@ -3,178 +3,160 @@
     "voice": [
 	{
         "Set": "Casio",
-        "Category": " GO Piano",
-        "PC": "1",
-        "MSB": "0",
-        "LSB": "68",
-        "content": "Go Grand"
+        "Category": " Tone",
+        "PC": "0",
+        "MSB": "0","LSB": "0",
+        "content": "Concert"
       },
 	  {
         "Set": "Casio",
-        "Category": " GO Piano",
+        "Category": " Tone",
+        "PC": "1",
+        "MSB": "0","LSB": "0",
+        "content": "Bright"
+      },
+	  {
+        "Set": "Casio",
+        "Category": " Tone",
         "PC": "2",
-        "MSB": "87","LSB": "73",
-        "content": "Bright Grand"
+        "MSB": "0","LSB": "0",
+        "content": "Mellow"
       },
 	  {
-        "Set": "Roland",
-        "Category": " GO Piano",
+        "Set": "Casio",
+        "Category": " Tone",
         "PC": "3",
-        "MSB": "87","LSB": "73",
-        "content": "European Pf"
+        "MSB": "0","LSB": "0",
+        "content": "Rock piano"
       },
 	  {
-        "Set": "Roland",
-        "Category": " GO Piano",
+        "Set": "Casio",
+        "Category": " Tone",
         "PC": "4",
-        "MSB": "87","LSB": "73",
-        "content": "Go Grand 2"
+        "MSB": "0","LSB": "0",
+        "content": "Jazz piano"
       },
 	  {
-        "Set": "Roland",
-        "Category": " GO Piano",
+        "Set": "Casio",
+        "Category": " Tone",
         "PC": "5",
-        "MSB": "87","LSB": "73",
-        "content": "ConcertGrand"
+        "MSB": "0","LSB": "0",
+        "content": "Elec piano"
       },
 	  {
-        "Set": "Roland",
-        "Category": " GO Piano",
+        "Set": "Casio",
+        "Category": " Tone",
         "PC": "6",
-        "MSB": "87","LSB": "73",
-        "content": "Mellow Grand"
+        "MSB": "0","LSB": "0",
+        "content": "Digital elec piano1"
       },
 	  {
-        "Set": "Roland",
-        "Category": " GO Piano",
+        "Set": "Casio",
+        "Category": " Tone",
         "PC": "7",
-        "MSB": "87","LSB": "73",
-        "content": "Honky-Tonk"
+        "MSB": "0","LSB": "0",
+        "content": "Digital elec piano2"
       },
 	  {
-        "Set": "Roland",
-        "Category": " GO Piano",
+        "Set": "Casio",
+        "Category": " Tone",
         "PC": "8",
-        "MSB": "87","LSB": "73",
-        "content": "Go Grand+Str"
+        "MSB": "0","LSB": "0",
+        "content": "60s E piano"
       },
 	  {
-        "Set": "Roland",
-        "Category": " GO Piano",
+        "Set": "Casio",
+        "Category": " Tone",
         "PC": "9",
-        "MSB": "87","LSB": "73",
-        "content": "Go Grand+Pad"
+        "MSB": "0","LSB": "0",
+        "content": "Hapischord"
       },
 	  {
-        "Set": "Roland",
-        "Category": " GO Piano",
+        "Set": "Casio",
+        "Category": " Tone",
         "PC": "10",
-        "MSB": "87","LSB": "73",
-        "content": "CoupleHarpsi"
+        "MSB": "0","LSB": "0",
+        "content": "Vibraphone"
       },
       {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "1",
+        "Set": "Casio",
+        "Category": " Tone",
+        "PC": "11",
         "MSB": "0",
-        "LSB": "68",
-        "content": "Concert Piano(GP1)"
+        "LSB": "0",
+        "content": "Strings1"
       },
       {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "1",
-        "MSB": "16",
-        "LSB": "67",
-        "content": "Ballad Piano(GP2)"
-      },
-      {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "2",
-        "MSB": "8",
-        "LSB": "66",
-        "content": "Bright Piano(GP3)"
-      },
-      {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "1",
-        "MSB": "4",
-        "LSB": "64",
-        "content": "Mellow Piano"
-      },
-      {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "1",
-        "MSB": "16",
-        "LSB": "64",
-        "content": "Upright Piano"
-      },
-      {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "1",
-        "MSB": "1",
-        "LSB": "65",
-        "content": "Mellow Upright"
-      },
-      {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "1",
-        "MSB": "1",
-        "LSB": "66",
-        "content": "Bright Upright"
-      },
-      {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "3",
-        "MSB": "8",
-        "LSB": "64",
-        "content": "Rock Piano"
-      },
-      {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "4",
+        "Set": "Casio",
+        "Category": " Tone",
+        "PC": "12",
         "MSB": "0",
-        "LSB": "64",
-        "content": "Ragtime Piano"
+        "LSB": "0",
+        "content": "Strings2"
       },
       {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "1",
-        "MSB": "2",
-        "LSB": "66",
-        "content": "Bright Forte"
+        "Set": "Casio",
+        "Category": " Tone",
+        "PC": "13",
+        "MSB": "0",
+        "LSB": "0",
+        "content": "Pipie organ"
       },
       {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "3",
-        "MSB": "8",
-        "LSB": "71",
-        "content": "SA Piano 3"
+        "Set": "Casio",
+        "Category": " Tone",
+        "PC": "14",
+        "MSB": "0",
+        "LSB": "0",
+        "content": "Jazz organ"
       },
       {
-        "Set": "Roland",
+        "Set": "Casio",
+        "Category": " Tone",
+        "PC": "15",
+        "MSB": "0",
+        "LSB": "0",
+        "content": "Elec organ 1"
+      },      
+      {
+        "Set": "Casio",
         "Category": " Piano",
-        "PC": "3",
-        "MSB": "8",
-        "LSB": "72",
-        "content": "70's E.Grand"
+        "PC": "16",
+        "MSB": "0",
+        "LSB": "0",
+        "content": "Elec organ 2"
       },
       {
-        "Set": "Roland",
-        "Category": " Piano",
-        "PC": "3",
-        "MSB": "47",
-        "LSB": "65",
-        "content": "Magical Piano"
+        "Set": "Casio",
+        "Category": " Tone",
+        "PC": "17",
+        "MSB": "0",
+        "LSB": "0",
+        "content": "Bass"
+      },
+      {
+        "Set": "Casio",
+        "Category": " Tone",
+        "PC": "18",
+        "MSB": "0",
+        "LSB": "0",
+        "content": "Test1"
+      },
+      {
+        "Set": "Casio",
+        "Category": " Tone",
+        "PC": "19",
+        "MSB": "0",
+        "LSB": "0",
+        "content": "Test2"
+      },
+      {
+        "Set": "Casio",
+        "Category": " Tone",
+        "PC": "20",
+        "MSB": "0",
+        "LSB": "0",
+        "content": "Test3"
       },
       {
         "Set": "Roland",
